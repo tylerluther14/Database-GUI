@@ -11,20 +11,21 @@ import java.awt.event.ActionListener;
 
 public class DisplayTwo implements ActionListener
 {
-	//might have to make instance variables for buttons
-	
+	//objects for Add Player Panel
 	JButton addPlayerButton;
 	JTextField loginID;
 	JTextField playerEmail;
 	JTextField password;
 	String addThisLine;
 	
+	//objects for Edit Player Panel
 	JButton editPlayerButton;
 	JTextField editLoginID;
 	JTextField editPlayerEmail;
 	JTextField editPassword;
 	String editThisLine;
 
+	//objects for Delete Player Panel
 	JButton deletePlayerButton;
 	JTextField deleteLoginID;
 	String deleteThisID;
