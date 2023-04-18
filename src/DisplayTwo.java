@@ -5,7 +5,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-
+import java.util.Timer;
+import java.util.TimerTask;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -127,9 +128,16 @@ public class DisplayTwo implements ActionListener
 					loginIDToBeDeletedTemp = deleteLoginID.getText();
 					System.out.println(loginIDToBeDeletedTemp);
 					deleteThisID = loginIDToBeDeletedTemp;
-					
-					//TODO: make it stall somehow before deleting
-					deleteLoginID.setText("Login ID");
+					new Timer().schedule(
+						new TimerTask() {
+							@Override
+							public void run()
+							{
+								deleteLoginID.setText("Login ID");
+							}
+						},
+						3000
+						);
 				}
 			}
 			);
@@ -168,12 +176,18 @@ public class DisplayTwo implements ActionListener
 					editThisLineTemp = login + "," + email + "," + password;
 					System.out.println(editThisLineTemp);
 					editThisLine = editThisLineTemp;
-					
-					//TODO: make it stall for 5 seconds somehow
-					editLoginID.setText("Login ID");
-					editPlayerEmail.setText("Player Email");
-					editPassword.setText("Password");
-				}
+					new Timer().schedule(
+						new TimerTask() {
+							@Override
+							public void run()
+							{
+								editLoginID.setText("Login ID");
+								editPlayerEmail.setText("Player Email");
+								editPassword.setText("Password");								}
+							},
+							3000
+						);
+					}
 			}
 			);
 		editPlayerPanel.add(editPlayerButton);
@@ -211,11 +225,19 @@ public class DisplayTwo implements ActionListener
 					addThisLineTemp = login + "," + email + "," + tempPassword;
 					System.out.println(addThisLineTemp);
 					addThisLine = addThisLineTemp;
-					
-					//TODO: make it stay for 5 seconds somehow before clearing
-					loginID.setText("Login ID");
-					playerEmail.setText("Player Email");
-					password.setText("Password");
+				
+					new Timer().schedule(
+						new TimerTask() {
+							@Override
+							public void run()
+							{
+								loginID.setText("Login ID");
+								playerEmail.setText("Player Email");
+								password.setText("Password");							
+							}								
+							},
+							3000
+						);
 				}
 			}
 		);
