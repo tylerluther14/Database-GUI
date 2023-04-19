@@ -19,6 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 public class DisplayOne {
 
+  String deleteThisCharacter;
+  String Char_Attributes;
+  
   public DisplayOne() {
     
     JPanel InsertCharacterPanel = insertCharacterPanel();
@@ -114,23 +117,25 @@ public class DisplayOne {
     JPanel DeleteCharacterPanel = new JPanel();
     DeleteCharacterPanel.setLayout(new GridLayout(0, 1));
     DeleteCharacterPanel.setBorder(DeleteCharacterBorder);
-    
+    JTextField char_NameD = new JTextField("Char_Name");
     JButton d = new JButton("Delete Character");
+    DeleteCharacterPanel.add(char_NameD);
+    
     d.addActionListener(
         new ActionListener()
         {
           String deletedCharacter;
           public void actionPerformed(ActionEvent e)
           {
-            deletedCharacter = deleteLoginID.getText();
-            System.out.println(loginIDToBeDeletedTemp);
-            deleteThisID = loginIDToBeDeletedTemp;
+            deletedCharacter = char_NameD.getText();
+            System.out.println(deletedCharacter);
+            deleteThisCharacter = deletedCharacter;
             new Timer().schedule(
               new TimerTask() {
                 @Override
                 public void run()
                 {
-                  deleteLoginID.setText("Login ID");
+                  char_NameD.setText("Login ID");
                 }
               },
               3000
@@ -139,11 +144,7 @@ public class DisplayOne {
         }
         );
 
-    
-    // text fields for delete character
-    JTextField char_NameD = new JTextField("Char_Name");
-    
-    DeleteCharacterPanel.add(char_NameD);
+   
     DeleteCharacterPanel.add(d);
     return DeleteCharacterPanel;
   }
@@ -166,16 +167,50 @@ public class DisplayOne {
     JTextField Char_Max_Hit_points = new JTextField("Char_Max_Hit_points");
     JTextField Player_Id = new JTextField("Player_Id");
     
-    //Insert Character button
-    JButton b = new JButton("Insert Character"); 
-    
-    
+   
     InsertCharacterPanel.add(char_Name);
     InsertCharacterPanel.add(char_Strength);
     InsertCharacterPanel.add(char_Stamina);
     InsertCharacterPanel.add(char_Current_Hit_points);
     InsertCharacterPanel.add(Char_Max_Hit_points);
     InsertCharacterPanel.add(Player_Id);
+    
+    JButton b = new JButton("Insert Character");
+    
+    b.addActionListener(
+        new ActionListener()
+        {
+          String characterAttributes;
+          public void actionPerformed(ActionEvent e)
+          {           
+            String characterName = char_Name.getText();
+            String characterStrength = char_Strength.getText();
+            String characterStamina = char_Stamina.getText();
+            String character_Current = char_Current_Hit_points.getText();
+            String character_Max = Char_Max_Hit_points.getText();
+            String player_ID = Player_Id.getText();
+            
+            characterAttributes = characterName + "," + characterStrength + "," + characterStamina;
+            System.out.println(characterAttributes);
+            Char_Attributes = characterAttributes;
+            new Timer().schedule(
+              new TimerTask() {
+                @Override
+                public void run()
+                {
+                  char_Name.setText("Login ID");
+                  char_Strength.setText("Player Email");
+                  char_Stamina.setText("Password");               }
+                },
+                3000
+              );
+            }
+        }
+        );
+
+
+    
+    
     InsertCharacterPanel.add(b);
     return InsertCharacterPanel;
   }
@@ -209,6 +244,8 @@ public class DisplayOne {
     UpdateCharacterPanel.add(char_Current_Hit_pointsU);
     UpdateCharacterPanel.add(Char_Max_Hit_pointsU);
     UpdateCharacterPanel.add(Player_IdU);
+    
+    
     UpdateCharacterPanel.add(u);
     return UpdateCharacterPanel;
   }
