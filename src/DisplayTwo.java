@@ -9,27 +9,37 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-public class DisplayTwo implements ActionListener
+public class DisplayTwo
 {
 	//objects for Add Player Panel
 	JButton addPlayerButton;
 	JTextField loginID;
-	JTextField playerEmail;
-	JTextField password;
+	JTextField playerEmail; //has to be 15-50 characters
+	JTextField password; //has to be between 5-10 characters
 	String addThisLine;
 	
 	//objects for Edit Player Panel
 	JButton editPlayerButton;
 	JTextField editLoginID;
-	JTextField editPlayerEmail;
-	JTextField editPassword;
-	String editThisLine;
+	JTextField editPlayerEmail; //has to be 15-50 characters
+	JTextField editPassword; //has to be between 5-10 characters
+	String editToThisLoginID;
+	String editToThisEmail;
+	String editToThisPassword;
 
 	//objects for Delete Player Panel
 	JButton deletePlayerButton;
 	JTextField deleteLoginID;
 	String deleteThisID;
+	
+	private static final String TABLE_NAME = "Player";
+	
+	ConnectivityFramework cf = ConnectivityFramework.getCF();
+	Connection m_dbConn = cf.getConnection();
 	
 	public DisplayTwo()
 	{
@@ -122,12 +132,11 @@ public class DisplayTwo implements ActionListener
 		deletePlayerButton.addActionListener(
 			new ActionListener()
 			{
-				String loginIDToBeDeletedTemp;
 				public void actionPerformed(ActionEvent e)
 				{
-					loginIDToBeDeletedTemp = deleteLoginID.getText();
-					System.out.println(loginIDToBeDeletedTemp);
-					deleteThisID = loginIDToBeDeletedTemp;
+					deleteThisID = deleteLoginID.getText();
+					System.out.println(deleteThisID);
+					//TODO: add delete() here
 					new Timer().schedule(
 						new TimerTask() {
 							@Override
@@ -166,16 +175,14 @@ public class DisplayTwo implements ActionListener
 		editPlayerButton.addActionListener(
 			new ActionListener()
 			{
-				String editThisLineTemp;
+
 				public void actionPerformed(ActionEvent e)
 				{						
-					String login = editLoginID.getText();
-					String email = editPlayerEmail.getText();
-					String password = editPassword.getText();
-					
-					editThisLineTemp = login + "," + email + "," + password;
-					System.out.println(editThisLineTemp);
-					editThisLine = editThisLineTemp;
+					editToThisLoginID = editLoginID.getText();
+					editToThisEmail = editPlayerEmail.getText();
+					editToThisPassword = editPassword.getText();
+					//TODO: add update() here
+					System.out.println(editToThisLoginID + "," + editToThisEmail + "," + editToThisPassword);
 					new Timer().schedule(
 						new TimerTask() {
 							@Override
@@ -215,16 +222,15 @@ public class DisplayTwo implements ActionListener
 		addPlayerButton.addActionListener(
 			new ActionListener()
 			{
-				String addThisLineTemp;
 				public void actionPerformed(ActionEvent e)
 				{
 					String login = loginID.getText();
 					String email = playerEmail.getText();
 					String tempPassword = password.getText();
 					
-					addThisLineTemp = login + "," + email + "," + tempPassword;
-					System.out.println(addThisLineTemp);
-					addThisLine = addThisLineTemp;
+					addThisLine = login + "," + tempPassword + "," + email;
+					System.out.println(addThisLine);
+					//TODO: use insert() here
 				
 					new Timer().schedule(
 						new TimerTask() {
@@ -250,10 +256,33 @@ public class DisplayTwo implements ActionListener
 	{
 		new DisplayTwo();
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) 
+	
+	public void insert() throws SQLException
 	{
-		// TODO Auto-generated method stub	
+		Statement stmt = m_dbConn.createStatement();
+		String data = "INSERT INTO " + TABLE_NAME + " VALUES (" + addThisLine + ");"; 
+		System.out.println(data);
+    	stmt.executeUpdate(data);
 	}
+	
+	public void update() throws SQLException
+	{
+		Statement stmt = m_dbConn.createStatement();
+		String data = "UPDATE " + TABLE_NAME + " SET ("
+				+ "P_login = " + editToThisLoginID + "," + "P_Password = " 
+				+ editToThisPassword + "," 
+				+ "P_email = " + editToThisEmail + "WHERE " ; //TODO: need to save original login ID and compare it here
+		System.out.println(data);
+    	stmt.executeUpdate(data);
+	}
+	
+	public void delete() throws SQLException
+	{
+		Statement stmt = m_dbConn.createStatement();
+		String data = "DELETE FROM " + TABLE_NAME + " WHERE (" + "P_Login == " + deleteThisID + ");"; 
+		System.out.println(data);
+    	stmt.executeUpdate(data);
+	}
+	
+	
 }

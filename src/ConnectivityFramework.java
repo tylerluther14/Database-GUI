@@ -9,6 +9,27 @@ import java.sql.Statement;
  */
 public class ConnectivityFramework {
 	
+	private static ConnectivityFramework cf;
+	
+	public ConnectivityFramework()
+	{
+		createConnection();
+	}
+	
+	public static ConnectivityFramework getCF()
+	{
+		if (cf == null)
+		{
+			cf = new ConnectivityFramework();
+		}
+		return cf;
+	}
+	
+	public Connection getConnection()
+	{
+		return m_dbConn;
+	}
+	
 	public static void main(String[] args)
 	{
 		System.out.println(CREATE_CHARACTER_TABLE_STMT);
@@ -54,25 +75,24 @@ public class ConnectivityFramework {
      */
     public static final String PASSWORD = "Password_12";
     
-
     //display one: tyler
     public static final String CREATE_CHARACTER_TABLE_STMT = 
-    		"CREATE TABLE CharInfo (Char_Name VARCHAR(100) PRIMARY KEY,"
+    		"CREATE TABLE CharInfo ("
+    		+ "Char_Name VARCHAR(100) PRIMARY KEY,"
     		+ "char_Strength REAL NOT NULL CHECK (char_Strength >= 0 AND char_Strength <= 100),"
     		+ "char_Stamina REAL NOT NULL CHECK (char_Stamina >= 0 AND char_Stamina <= 100),"
     		+ "char_Current_Hit_Points INTEGER NOT NULL,"
     		+ "Char_Max_Hit_Points INTEGER NOT NULL,"
     		+ "Player_ID INTEGER NOT NULL,"
     		+ "Location_ID INTEGER NOT NULL,"
-    		+ "CONSTRAINT fk_CharInfo_Player"
-    		+ "FOREIGN KEY (Player_ID) REFERENCES Player(P_Login),"
+    		+ "CONSTRAINT fk_CharInfo_Player FOREIGN KEY (Player_ID) REFERENCES Player(P_Login),"
     		+ "CONSTRAINT fk_CharInfo_Location FOREIGN KEY (Location_ID) REFERENCES Location(LOC_ID)"
     		+ ");";
     		
     //display two: rachel
     public static final String CREATE_PLAYER_TABLE_STMT =
     		"CREATE TABLE Player "
-    		+ "(P_Login INTEGER PRIMARY KEY, "
+    		+ "(P_Login INTEGER PRIMARY K EY, "
     		+ "P_Password VARCHAR(10) NOT NULL CHECK (LENGTH(P_Password) >= 5), "
     		+ "P_email VARCHAR(50) NOT NULL CHECK (LENGTH(P_email) >= 15));";
     
@@ -119,26 +139,32 @@ public class ConnectivityFramework {
       }
     }
     
-    public String createTables()
+    /**
+     * Executes CREATE TABLE SQL statements 
+     * @param tableStmt
+     * @throws SQLException
+     */
+    public void createTable(String tableStmt) throws SQLException
     {
-    	
-    	
-    	return null;
+    	Statement stmt = m_dbConn.createStatement();
+    	System.out.println("Statement to be executed: " + tableStmt);
+    	String insertData = new String(tableStmt);
+    	stmt.executeUpdate(insertData);
     }
    
-   /**
-    * Executes an SQL statement that is not a SELECT statement
-    * @param count (aka i from main method for loop)
-    * @throws SQLException
-    */
-   public void insert(int count) throws SQLException
-   {
-     Statement stmt = m_dbConn.createStatement();
-     //TODO: THIS NEEDS TO BE CHANGED
-     String data = "INSERT INTO TEST_JOHNSTON (Num1,Num2,Name,Last_Name,Dub) VAlUES("+count+","+(count+1)+","+(count+10)+","+(count+20)+","+(count+0.3)+")";
-     System.out.println(data);
-     String insertData = new String(data);
-     stmt.executeUpdate(insertData);
-   }
+//   /**
+//    * TODO: should we make this class into an interface and use @override ????
+//    * Executes an SQL statement that is not a SELECT statement
+//    * @throws SQLException
+//    */
+//   public void insert() throws SQLException
+//   {
+//     Statement stmt = m_dbConn.createStatement();
+//     //TODO: THIS NEEDS TO BE CHANGED
+//     String data = null;
+//     System.out.println(data);
+//     String insertData = new String(data);
+//     stmt.executeUpdate(insertData);
+//   }
 }
 
