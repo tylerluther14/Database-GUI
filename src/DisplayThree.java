@@ -103,7 +103,7 @@ public class DisplayThree extends JFrame{
       JPanel deleteWeaponPanel = new JPanel();
       deleteWeaponPanel.setLayout(new GridLayout(0, 2));
       deleteWeaponPanel.setBorder(deleteWeaponBorder);
-      //text fields for "Delete Player" panel
+      //text fields for "Delete Weapon" panel
       JLabel deleteWeapName = new JLabel("Weapon Name: ");
       JTextField deleteWeapNameText = new JTextField();
       JLabel deleteWeapID = new JLabel("Weapon ID: ");
@@ -132,13 +132,13 @@ public class DisplayThree extends JFrame{
       JTextField temp = new JTextField("TEMP: This should be a table of all of the entries in the table");
       weaponListPanel.add(temp);
       
-      //Selected Player Panel
+      //Selected Weapon Panel
       Border selectedWeaponBorder = BorderFactory.createTitledBorder("Selected Weapon");
       JPanel selectedWeaponPanel = new JPanel();
       selectedWeaponPanel.setLayout(new GridLayout(0 , 1));
       selectedWeaponPanel.setBorder(selectedWeaponBorder);
       
-      //create panel for left side of selected player panel
+      //create panel for left side of selected Weapon panel
       JPanel selectedWeapPanel = new JPanel();
       selectedWeapPanel.setLayout(new GridLayout(0, 2));
       JLabel selectedWeapName = new JLabel("Weapon Name:    ");
@@ -161,7 +161,7 @@ public class DisplayThree extends JFrame{
       selectedWeapPanel.add(storedInfo);
       
       //JPanel abilityInfoPanel = new JPanel();
-      //selectedWeaponPanel.add(selectedPlayerCharacterList);
+      //selectedWeaponPanel.add(selectedWeaponCharacterList);
       
       //SELECTED WEAPON ABILITY INFO
       
@@ -193,7 +193,7 @@ public class DisplayThree extends JFrame{
       selectedWeaponPanel.add(selectedWeapPanel);
       selectedWeaponPanel.add(abilityInfoPanel);
       
-    //Combine player list and selected player panels
+    //Combine Weapon list and selected Weapon panels
       JPanel panel2 = new JPanel();
       panel2.setLayout(new GridLayout());
       panel2.add(weaponListPanel);
