@@ -1,6 +1,10 @@
+import com.mysql.cj.xdevapi.Statement;
+
 import javax.swing.border.Border;
 import java.awt.*;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 
 import javax.swing.BorderFactory;
@@ -9,7 +13,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class DisplayFour {
+public class DisplayFour implements StatementCreator
+{
+    ConnectivityFramework cf = ConnectivityFramework.getCF();
+	Connection m_dbConn = cf.getConnection();
+
 
     public static void main(String[] args) {
         new DisplayFour();
@@ -17,6 +25,7 @@ public class DisplayFour {
 
     public DisplayFour()
     {
+
         JFrame frame = new JFrame();
 
         //Add Location Info Panel
@@ -138,6 +147,7 @@ public class DisplayFour {
             System.out.println(text2);
             System.out.println(text3);
 
+//            ConnectivityFramework.getCF().addLocation(text, text1, text2, text3);
         });
 
         //Add a delete
@@ -168,5 +178,40 @@ public class DisplayFour {
     }
 
 
+    @Override
+    public void insert() throws SQLException
+    {
+        Statement stmt = (Statement) m_dbConn.createStatement();
+        PreparedStatement ps = ConnectivityFramework.getCF().getConnection().prepareStatement("INSERT INTO Location VALUES(?,?,?,?)");
+        ps.setString(1, "Location ID");
+        ps.setString(2, "Location Name");
+        ps.setString(3, "Location Size");
+        ps.setString(4, "Location Type");
+        ps.executeUpdate();
+    }
 
-}
+
+
+    @Override
+    public void update() throws SQLException
+    {
+        Statement stmt = (Statement) m_dbConn.createStatement();
+        PreparedStatement ps = ConnectivityFramework.getCF().getConnection().prepareStatement("UPDATE Location SET LocationID = ?, LocationName = ?, LocationSize = ?, LocationType = ?");
+        ps.setString(1, "Location ID");
+        ps.setString(2, "Location Name");
+        ps.setString(3, "Location Size");
+        ps.setString(4, "Location Type");
+        ps.executeUpdate();
+
+    }
+
+    @Override
+    public void delete() throws SQLException
+    {
+        Statement stmt = (Statement) m_dbConn.createStatement();
+        PreparedStatement ps = ConnectivityFramework.getCF().getConnection().prepareStatement("DELETE FROM Location WHERE LocationID = ?");
+        ps.setString(1, "Location ID");
+        ps.executeUpdate();
+    }
+
+    }

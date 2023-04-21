@@ -1,8 +1,5 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
- 
+import java.sql.*;
+
 /**
  * @author rj0851 (Rachel Johnston)
  * Contains methods for JDBC and main method that runs the insertion tests
@@ -25,7 +22,7 @@ public class ConnectivityFramework {
 	
 	/**
 	 * getter for the CF singleton
-	 * @return
+	 * @return the CF singleton
 	 */
 	public static ConnectivityFramework getCF()
 	{
@@ -38,7 +35,7 @@ public class ConnectivityFramework {
 	
 	/**
 	 * getter for the connection created for the CF singleton
-	 * @return
+	 * @return the connection created for the CF singleton
 	 */
 	public Connection getConnection()
 	{
@@ -47,7 +44,7 @@ public class ConnectivityFramework {
 	
 	/**
 	 * main method, runs everything
-	 * @param args
+	 * @param args command line arguments
 	 */
 	public static void main(String[] args)
 	{
@@ -172,8 +169,8 @@ public class ConnectivityFramework {
     
     /**
      * Executes CREATE TABLE SQL statements 
-     * @param tableStmt
-     * @throws SQLException
+     * @param tableStmt the SQL statement to be executed
+     * @throws SQLException if the statement is invalid
      */
     public void createTable(String tableStmt) throws SQLException
     {
@@ -182,5 +179,8 @@ public class ConnectivityFramework {
     	String insertData = new String(tableStmt);
     	stmt.executeUpdate(insertData);
     }
+
+
+
 }
 
