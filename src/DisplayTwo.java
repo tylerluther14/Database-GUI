@@ -13,34 +13,53 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class DisplayTwo
+/**
+ * @author Rachel Johnston
+ * creates java GUI for display two (player table)
+ * contains methods for creating SQL statements
+ */
+public class DisplayTwo implements StatementCreator
 {
-	//objects for Add Player Panel
+	/**
+	 * all of these are objects for the Add Player Panel
+	 */
 	JButton addPlayerButton;
 	JTextField loginID;
 	JTextField playerEmail; //has to be 15-50 characters
 	JTextField password; //has to be between 5-10 characters
 	String addThisLine;
 	
-	//objects for Edit Player Panel
+	/**
+	 * all of these are objects for the Edit Player Panel
+	 */
 	JButton editPlayerButton;
 	JTextField editLoginID;
 	JTextField editPlayerEmail; //has to be 15-50 characters
 	JTextField editPassword; //has to be between 5-10 characters
+	JTextField editThisPlayer;
+	String playerToBeEdited;
 	String editToThisLoginID;
 	String editToThisEmail;
 	String editToThisPassword;
 
-	//objects for Delete Player Panel
+	/**
+	 * all of these are objects for the Delete Player panel
+	 */
 	JButton deletePlayerButton;
 	JTextField deleteLoginID;
 	String deleteThisID;
 	
+	/**
+	 * constant for my table name
+	 */
 	private static final String TABLE_NAME = "Player";
 	
-	ConnectivityFramework cf = ConnectivityFramework.getCF();
-	Connection m_dbConn = cf.getConnection();
+//	ConnectivityFramework cf = ConnectivityFramework.getCF();
+//	Connection m_dbConn = cf.getConnection();
 	
+	/**
+	 * constructor for the GUI
+	 */
 	public DisplayTwo()
 	{
 		JFrame frame = new JFrame();
@@ -75,6 +94,11 @@ public class DisplayTwo
 		
 	}
 
+	/**
+	 * creates the Selected Player panel
+	 * used in the constructor
+	 * @return panel
+	 */
 	private JPanel createSelectedPlayerPanel() 
 	{
 		Border selectedPlayerBorder = BorderFactory.createTitledBorder("Selected Player");
@@ -105,6 +129,11 @@ public class DisplayTwo
 		return selectedPlayerPanel;
 	}
 
+	/**
+	 * creates the Player List panel
+	 * used in the constructor
+	 * @return panel
+	 */
 	private JPanel createPlayerListPanel() 
 	{
 		Border playerListBorder = BorderFactory.createTitledBorder("Player List");
@@ -117,6 +146,11 @@ public class DisplayTwo
 		return playerListPanel;
 	}
 
+	/**
+	 * creates the Delete Player panel
+	 * used in the constructor
+	 * @return panel
+	 */
 	private JPanel createDeletePlayerPanel() 
 	{
 		Border deletePlayerBorder = BorderFactory.createTitledBorder("Delete Player");
@@ -137,6 +171,15 @@ public class DisplayTwo
 					deleteThisID = deleteLoginID.getText();
 					System.out.println(deleteThisID);
 					//TODO: add delete() here
+					try 
+					{
+						delete();
+					} 
+					catch (SQLException e1) 
+					{
+						e1.getMessage();
+					}
+					
 					new Timer().schedule(
 						new TimerTask() {
 							@Override
@@ -154,7 +197,12 @@ public class DisplayTwo
 		
 		return deletePlayerPanel;
 	}
-
+	
+	/**
+	 * creates the Edit Player panel
+	 * used in the constructor
+	 * @return panel
+	 */
 	private JPanel createEditPlayerPanel() 
 	{
 		Border editPlayerBorder = BorderFactory.createTitledBorder("Edit Player");
@@ -166,6 +214,8 @@ public class DisplayTwo
 		editLoginID = new JTextField("Login ID");
 		editPlayerEmail = new JTextField("Player Email");
 		editPassword = new JTextField("Password");
+		editThisPlayer = new JTextField("Enter login ID of player you want to edit.");
+		editPlayerPanel.add(editThisPlayer);
 		editPlayerPanel.add(editLoginID);
 		editPlayerPanel.add(editPlayerEmail);
 		editPlayerPanel.add(editPassword);
@@ -177,11 +227,22 @@ public class DisplayTwo
 			{
 
 				public void actionPerformed(ActionEvent e)
-				{						
+				{	
+					playerToBeEdited = editThisPlayer.getText();
 					editToThisLoginID = editLoginID.getText();
 					editToThisEmail = editPlayerEmail.getText();
 					editToThisPassword = editPassword.getText();
-					//TODO: add update() here
+
+					try 
+					{
+						update();
+					} 
+					catch (SQLException e1) 
+					{
+						e1.getMessage();
+					}
+					
+					System.out.println(playerToBeEdited);
 					System.out.println(editToThisLoginID + "," + editToThisEmail + "," + editToThisPassword);
 					new Timer().schedule(
 						new TimerTask() {
@@ -202,6 +263,11 @@ public class DisplayTwo
 		return editPlayerPanel;
 	}
 
+	/**
+	 * creates the Add Player panel
+	 * used in the constructor
+	 * @return panel
+	 */
 	private JPanel createAddPlayerPanel() 
 	{
 		Border addPlayerBorder = BorderFactory.createTitledBorder("Add Player");
@@ -228,9 +294,16 @@ public class DisplayTwo
 					String email = playerEmail.getText();
 					String tempPassword = password.getText();
 					
-					addThisLine = login + "," + tempPassword + "," + email;
+					addThisLine = "'" + login + "'" + "," + "'" + tempPassword + "'" + "," + "'" + email + "'";
 					System.out.println(addThisLine);
-					//TODO: use insert() here
+					
+					try 
+					{
+						insert();
+					} catch (SQLException e1) 
+					{
+						e1.getMessage();
+					}
 				
 					new Timer().schedule(
 						new TimerTask() {
@@ -252,36 +325,52 @@ public class DisplayTwo
 		return addPlayerPanel;
 	}
 
+	/**
+	 * main method, runs everything
+	 * @param args
+	 */
 	public static void main (String[] args)
 	{
 		new DisplayTwo();
 	}
 	
+	/**
+	 * implemented by StatementCreator interface
+	 * creates an INSERT statement
+	 */
 	public void insert() throws SQLException
 	{
-		Statement stmt = m_dbConn.createStatement();
-		String data = "INSERT INTO " + TABLE_NAME + " VALUES (" + addThisLine + ");"; 
+		//Statement stmt = m_dbConn.createStatement();
+		String data = "INSERT INTO " + TABLE_NAME + " (P_Login, P_Password, P_Email)" + " VALUES (" + addThisLine + ");"; 
 		System.out.println(data);
-    	stmt.executeUpdate(data);
+    	//stmt.executeUpdate(data);
 	}
 	
+	/**
+	 * implemented by StatementCreator interface
+	 * creates an UPDATE statement
+	 */
 	public void update() throws SQLException
 	{
-		Statement stmt = m_dbConn.createStatement();
-		String data = "UPDATE " + TABLE_NAME + " SET ("
-				+ "P_login = " + editToThisLoginID + "," + "P_Password = " 
-				+ editToThisPassword + "," 
-				+ "P_email = " + editToThisEmail + "WHERE " ; //TODO: need to save original login ID and compare it here
+		//Statement stmt = m_dbConn.createStatement();
+		String data = "UPDATE " + TABLE_NAME + " SET "
+				+ "P_login = " + "'" + editToThisLoginID + "'" + "," + "P_Password = " 
+				+ "'" + editToThisPassword + "'" + "," 
+				+ "P_email = " + "'" + editToThisEmail + "'" + " WHERE P_login = " + "'" + playerToBeEdited + "'" + ";" ; //TODO: need to save original login ID and compare it here
 		System.out.println(data);
-    	stmt.executeUpdate(data);
+    	//stmt.executeUpdate(data);
 	}
 	
+	/**
+	 * implemented by StatementCreator interface
+	 * creates a DELETE statement
+	 */
 	public void delete() throws SQLException
 	{
-		Statement stmt = m_dbConn.createStatement();
-		String data = "DELETE FROM " + TABLE_NAME + " WHERE (" + "P_Login == " + deleteThisID + ");"; 
+		//Statement stmt = m_dbConn.createStatement();
+		String data = "DELETE FROM " + TABLE_NAME + " WHERE (" + "P_Login = " + "'" + deleteThisID + "'" + ");"; 
 		System.out.println(data);
-    	stmt.executeUpdate(data);
+    	//stmt.executeUpdate(data);
 	}
 	
 	

@@ -9,13 +9,24 @@ import java.sql.Statement;
  */
 public class ConnectivityFramework {
 	
+	
+	/**
+	 * establishes this class as a singleton
+	 */
 	private static ConnectivityFramework cf;
 	
+	/**
+	 * creates connection automatically when ConnnectivityFramework object is created
+	 */
 	public ConnectivityFramework()
 	{
 		createConnection();
 	}
 	
+	/**
+	 * getter for the CF singleton
+	 * @return
+	 */
 	public static ConnectivityFramework getCF()
 	{
 		if (cf == null)
@@ -25,11 +36,19 @@ public class ConnectivityFramework {
 		return cf;
 	}
 	
+	/**
+	 * getter for the connection created for the CF singleton
+	 * @return
+	 */
 	public Connection getConnection()
 	{
 		return m_dbConn;
 	}
 	
+	/**
+	 * main method, runs everything
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		System.out.println(CREATE_CHARACTER_TABLE_STMT);
@@ -75,7 +94,10 @@ public class ConnectivityFramework {
      */
     public static final String PASSWORD = "Password_12";
     
-    //display one: tyler
+    /**
+     * constant for CREATE statement for character
+     * Tyler: display one
+     */
     public static final String CREATE_CHARACTER_TABLE_STMT = 
     		"CREATE TABLE CharInfo ("
     		+ "Char_Name VARCHAR(100) PRIMARY KEY,"
@@ -88,15 +110,21 @@ public class ConnectivityFramework {
     		+ "CONSTRAINT fk_CharInfo_Player FOREIGN KEY (Player_ID) REFERENCES Player(P_Login),"
     		+ "CONSTRAINT fk_CharInfo_Location FOREIGN KEY (Location_ID) REFERENCES Location(LOC_ID)"
     		+ ");";
-    		
-    //display two: rachel
+    	
+    /**
+     * constant for CREATE statement for player
+     * Rachel: display two
+     */
     public static final String CREATE_PLAYER_TABLE_STMT =
     		"CREATE TABLE Player "
     		+ "(P_Login INTEGER PRIMARY K EY, "
     		+ "P_Password VARCHAR(10) NOT NULL CHECK (LENGTH(P_Password) >= 5), "
     		+ "P_email VARCHAR(50) NOT NULL CHECK (LENGTH(P_email) >= 15));";
     
-    //display three: brian
+    /**
+     * constant for CREATE statement for weapon
+     * Brian: display three
+     */
     public static final String CREATE_WEAPON_TABLE_STMT = 
     		"CREATE TABLE Weapon("
     		+ "Ability_id INTEGER NOT NULL,"
@@ -109,7 +137,10 @@ public class ConnectivityFramework {
     		+ "CONSTRAINT fk_weapon_id FOREIGN KEY (W_id) REFERENCES  Items(item_ID)"
     		+ " );";
     
-    //display four: alecia
+    /**
+     * constant for CREATE statement for location
+     * Alecia: display four
+     */
     public static final String CREATE_LOCATION_TABLE_STMT = 
     		"CREATE TABLE Location ("
     		+ "LOC_ID INTEGER PRIMARY KEY,"
@@ -151,20 +182,5 @@ public class ConnectivityFramework {
     	String insertData = new String(tableStmt);
     	stmt.executeUpdate(insertData);
     }
-   
-//   /**
-//    * TODO: should we make this class into an interface and use @override ????
-//    * Executes an SQL statement that is not a SELECT statement
-//    * @throws SQLException
-//    */
-//   public void insert() throws SQLException
-//   {
-//     Statement stmt = m_dbConn.createStatement();
-//     //TODO: THIS NEEDS TO BE CHANGED
-//     String data = null;
-//     System.out.println(data);
-//     String insertData = new String(data);
-//     stmt.executeUpdate(insertData);
-//   }
 }
 
