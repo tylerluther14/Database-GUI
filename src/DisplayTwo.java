@@ -4,13 +4,18 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 
 /**
  * @author Rachel Johnston
@@ -141,8 +146,18 @@ public class DisplayTwo implements StatementCreator
 		JPanel playerListPanel = new JPanel();
 		playerListPanel.setLayout(new GridLayout(0, 1));
 		playerListPanel.setBorder(playerListBorder);
-		JTextField temp = new JTextField("TEMP: This should be a table of all of the entries in the table");
-		playerListPanel.add(temp);
+		
+		DefaultTableModel model = new DefaultTableModel();
+		model.addColumn("Login ID");
+		model.addColumn("Email");
+		model.addColumn("Password");
+		
+		model.addRow(new Object[] {"temp0", "temp1", "temp2"});
+		
+		JTable table = new JTable(model);
+		JScrollPane pane = new JScrollPane(table);
+		
+		playerListPanel.add(pane);
 		
 		return playerListPanel;
 	}
@@ -376,9 +391,9 @@ public class DisplayTwo implements StatementCreator
 		ps.setString(2, addThisPassword);
 		ps.setString(3, addThisPlayerEmail);
     	
-		int row = ps.executeUpdate();
+		ps.executeUpdate();
 		
-		System.out.println("Insert: " + addThisLoginID + "," + addThisPassword + "," + addThisPlayerEmail + "," + " into row" + row);
+		System.out.println("Insert: " + addThisLoginID + "," + addThisPassword + "," + addThisPlayerEmail);
 	}
 	
 	/**
@@ -394,9 +409,9 @@ public class DisplayTwo implements StatementCreator
 		ps.setString(3, editToThisEmail);
 		ps.setInt(4, playerToBeEdited);
     	
-		int row = ps.executeUpdate();
+		ps.executeUpdate();
 		
-		System.out.println("Update " + playerToBeEdited + "to: " + editToThisLoginID + "," + editToThisPassword + "," + editToThisEmail + "in row" + row);
+		System.out.println("Update " + playerToBeEdited + "to: " + editToThisLoginID + "," + editToThisPassword + "," + editToThisEmail);
 	}
 	
 	/**
@@ -409,9 +424,9 @@ public class DisplayTwo implements StatementCreator
 		PreparedStatement ps = m_dbConn.prepareStatement(deleteStmt);
 		ps.setInt(1, deleteThisID);
 		
-		int row = ps.executeUpdate();
+		ps.executeUpdate();
 		
-		System.out.print("Delete: " + deleteThisID + "from row" + row);
+		System.out.print("Delete: " + deleteThisID);
 	}
 	
 	
