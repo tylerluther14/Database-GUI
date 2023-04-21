@@ -173,8 +173,6 @@ public class DisplayFour implements StatementCreator
         frame.setTitle("Display Four");
         frame.pack();
         frame.setVisible(true);
-
-
     }
 
 
@@ -182,15 +180,13 @@ public class DisplayFour implements StatementCreator
     public void insert() throws SQLException
     {
         Statement stmt = (Statement) m_dbConn.createStatement();
-        PreparedStatement ps = ConnectivityFramework.getCF().getConnection().prepareStatement("INSERT INTO Location VALUES(?,?,?,?)");
+        PreparedStatement ps = m_dbConn.prepareStatement("INSERT INTO Location VALUES(?,?,?,?)");
         ps.setString(1, "Location ID");
         ps.setString(2, "Location Name");
         ps.setString(3, "Location Size");
         ps.setString(4, "Location Type");
         ps.executeUpdate();
     }
-
-
 
     @Override
     public void update() throws SQLException
