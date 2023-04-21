@@ -119,7 +119,7 @@ public class ConnectivityFramework {
      */
     public static final String CREATE_PLAYER_TABLE_STMT =
     		"CREATE TABLE Player "
-    		+ "(P_Login INTEGER PRIMARY K EY, "
+    		+ "(P_Login INTEGER PRIMARY KEY, "
     		+ "P_Password VARCHAR(10) NOT NULL CHECK (LENGTH(P_Password) >= 5), "
     		+ "P_email VARCHAR(50) NOT NULL CHECK (LENGTH(P_email) >= 15));";
     
@@ -132,11 +132,10 @@ public class ConnectivityFramework {
     		+ "Ability_id INTEGER NOT NULL,"
     		+ "W_id INTEGER NOT NULL,"
     		+ "WeaponType VARCHAR(50) NOT NULL,"
-    		+ "Stored VARCHAR(3) NOT NULL,"
+    		+ "StoredWeapon VARCHAR(3) NOT NULL," //TODO: BRIAN- stored is apparently an SQL keyword so i had to change the attributes name -r
     		+ "W_Name VARCHAR(100) NOT NULL,"
     		+ "CONSTRAINT pk_weapon PRIMARY KEY (W_id, W_Name),"
-    		+ "CONSTRAINT fk_weapon_ability FOREIGN KEY (Ability_id) REFERENCES Ability(Ability_id),"
-    		+ "CONSTRAINT fk_weapon_id FOREIGN KEY (W_id) REFERENCES  Items(item_ID)"
+    		+ "CONSTRAINT fk_weapon_ability FOREIGN KEY (Ability_id) REFERENCES Ability(Ability_id)"
     		+ " );";
     
     /**
