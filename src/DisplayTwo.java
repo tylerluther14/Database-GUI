@@ -10,6 +10,7 @@ import java.util.TimerTask;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -27,7 +28,9 @@ public class DisplayTwo implements StatementCreator
 	JTextField loginID;
 	JTextField playerEmail; //has to be 15-50 characters
 	JTextField password; //has to be between 5-10 characters
-	String addThisLine;
+	String addThisLoginID;
+	String addThisPlayerEmail;
+	String addThisPassword;
 	
 	/**
 	 * all of these are objects for the Edit Player Panel
@@ -54,8 +57,8 @@ public class DisplayTwo implements StatementCreator
 	 */
 	private static final String TABLE_NAME = "Player";
 	
-//	ConnectivityFramework cf = ConnectivityFramework.getCF();
-//	Connection m_dbConn = cf.getConnection();
+	ConnectivityFramework cf = ConnectivityFramework.getCF();
+	Connection m_dbConn = cf.getConnection();
 	
 	/**
 	 * constructor for the GUI
@@ -290,19 +293,18 @@ public class DisplayTwo implements StatementCreator
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					String login = loginID.getText();
-					String email = playerEmail.getText();
-					String tempPassword = password.getText();
+					addThisLoginID = loginID.getText();
+					addThisPlayerEmail = playerEmail.getText();
+					addThisPassword = password.getText();
 					
-					addThisLine = "'" + login + "'" + "," + "'" + tempPassword + "'" + "," + "'" + email + "'";
-					System.out.println(addThisLine);
+					System.out.println("Adding " + addThisLoginID + "," + addThisPassword + "," + addThisPlayerEmail);
 					
 					try 
 					{
 						insert();
 					} catch (SQLException e1) 
 					{
-						e1.getMessage();
+						System.out.println(e1.getMessage());
 					}
 				
 					new Timer().schedule(
@@ -341,9 +343,16 @@ public class DisplayTwo implements StatementCreator
 	public void insert() throws SQLException
 	{
 		//Statement stmt = m_dbConn.createStatement();
-		String data = "INSERT INTO " + TABLE_NAME + " (P_Login, P_Password, P_Email)" + " VALUES (" + addThisLine + ");"; 
-		System.out.println(data);
-    	//stmt.executeUpdate(data);
+		String insertStmt = "INSERT INTO " + TABLE_NAME + " (P_login, P_Password, P_Email) VALUES (?, ?, ?);";
+		PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+		int loginID = Integer.parseInt(addThisLoginID);
+		ps.setInt(1, loginID);
+		ps.setString(2, addThisPassword);
+		ps.setString(3, addThisPlayerEmail);
+    	
+		int row = ps.executeUpdate();
+		
+		System.out.println("Insert: " + addThisLoginID + "," + addThisPassword + "," + addThisPlayerEmail + "," + " into row" + row);
 	}
 	
 	/**

@@ -45,13 +45,18 @@ public class ConnectivityFramework {
 	/**
 	 * main method, runs everything
 	 * @param args command line arguments
+	 * @param args
+	 * @throws SQLException 
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws SQLException
 	{
-		System.out.println(CREATE_CHARACTER_TABLE_STMT);
-		System.out.println(CREATE_PLAYER_TABLE_STMT);
-		System.out.println(CREATE_WEAPON_TABLE_STMT);
-		System.out.println(CREATE_LOCATION_TABLE_STMT);
+	
+		//statements need to be executed in this order
+		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
+		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
+		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
+		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
+		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
 	}
  
     /**
@@ -148,6 +153,22 @@ public class ConnectivityFramework {
     		+ "CONSTRAINT fk_leadid FOREIGN KEY (Lead_Id) REFERENCES Location(LOC_ID)"
     		+ ");";
     
+    /**
+     * constant for CREATE statement for ability
+     */
+    public static final String CREATE_ABILITY_TABLE_STMT =
+            "CREATE TABLE Ability (" +
+            " Ability_id INTEGER PRIMARY KEY," +
+            " Hit_Points INTEGER NOT NULL," +
+            " Strength REAL NOT NULL CHECK (Strength >= 0 AND Strength <= 100)," +
+            " Stamina REAL NOT NULL CHECK (Stamina >= 0 AND Stamina <= 100)," +
+            " Repeat_Rate REAL," +
+            "Repeating varchar(3) NOT NULL," +
+            "Repeat_Time INTEGER," +
+            "Execute_Time INTEGER NOT NULL," +
+            "Ability_Type varchar(7) NOT  NULL" +  
+            " );";
+    
     
     protected Connection m_dbConn = null;
    
@@ -179,8 +200,10 @@ public class ConnectivityFramework {
     	String insertData = new String(tableStmt);
     	stmt.executeUpdate(insertData);
     }
-
-
-
+    
+    public void populateTables()
+    {
+    	
+    }
 }
 
