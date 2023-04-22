@@ -79,8 +79,15 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	 */
 	private static final String TABLE_NAME = "Player";
 	
-	ConnectivityFramework cf = ConnectivityFramework.getCF();
-	Connection m_dbConn = cf.getConnection();
+	/**
+	 * Retrieves CF singleton to be used in the display
+	 */
+	private ConnectivityFramework cf = ConnectivityFramework.getCF();
+	
+	/**
+	 * Retrieves connection from CF singleton
+	 */
+	private Connection m_dbConn = cf.getConnection();
 	
 	/**
 	 * constructor for the GUI
