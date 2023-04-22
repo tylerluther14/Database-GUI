@@ -10,11 +10,16 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 
 /**
@@ -22,7 +27,7 @@ import java.sql.SQLException;
  * creates java GUI for display two (player table)
  * contains methods for creating SQL statements
  */
-public class DisplayTwo implements StatementCreator
+public class DisplayTwo implements StatementCreator, MouseListener
 {
 	/**
 	 * all of these are objects for the Add Player Panel
@@ -54,6 +59,20 @@ public class DisplayTwo implements StatementCreator
 	JButton deletePlayerButton;
 	JTextField deleteLoginID;
 	int deleteThisID;
+	
+	/**
+	 * these are objects for the Player List panel
+	 */
+	DefaultTableModel model = new DefaultTableModel();
+	JTable table = new JTable(model);
+	
+	/**
+	 * these are objects for the Selected Player panel
+	 */
+	JTextField selectedLoginID;
+	JTextField selectedPlayerEmail;
+	JTextField selectedPlayerPassword;
+	JTextField selectedPlayerCharacterList;
 	
 	/**
 	 * constant for my table name
@@ -98,6 +117,8 @@ public class DisplayTwo implements StatementCreator
 		frame.pack();
 		frame.setVisible(true);
 		
+		this.refreshJTable(model);
+		
 	}
 
 	/**
@@ -112,23 +133,35 @@ public class DisplayTwo implements StatementCreator
 		selectedPlayerPanel.setLayout(new GridLayout(0, 2));
 		selectedPlayerPanel.setBorder(selectedPlayerBorder);
 		
-		//create panel for left side of selected player panel
+	//create panel for left side of selected player panel
 		JPanel subPanel = new JPanel();
 		subPanel.setLayout(new GridLayout(3, 0));
-		JTextField selectedLoginID = new JTextField("Login ID");
+		
+		JLabel loginIDLabel = new JLabel("Login ID: ");
+		subPanel.add(loginIDLabel);
+		selectedLoginID = new JTextField();
+		selectedLoginID.setEditable(false);
 		subPanel.add(selectedLoginID);
-		JTextField selectedPlayerEmail = new JTextField("Player Email");
+		
+		JLabel emailLabel = new JLabel("Player Email: ");
+		subPanel.add(emailLabel);
+		selectedPlayerEmail = new JTextField();
+		selectedPlayerEmail.setEditable(false);
 		subPanel.add(selectedPlayerEmail);
-		JTextField selectedPlayerPassword = new JTextField("Password");
+		
+		JLabel passwordLabel = new JLabel("Password: ");
+		subPanel.add(passwordLabel);
+		selectedPlayerPassword = new JTextField();
+		selectedPlayerPassword.setEditable(false);
 		subPanel.add(selectedPlayerPassword);
 		
-		//create panel for right side of selected player panel
+	//create panel for right side of selected player panel
 		JPanel subPanel2 = new JPanel();
 		subPanel2.setLayout(new GridLayout(0, 1));
-		JTextField selectedPlayerCharacterList = new JTextField("Character List TEMP: should be a list");
+		selectedPlayerCharacterList = new JTextField("Character List TEMP: should be a list");
 		selectedPlayerPanel.add(selectedPlayerCharacterList);
 		
-		//combine sub-panels
+	//combine sub-panels
 		selectedPlayerPanel.add(subPanel);
 		selectedPlayerPanel.add(subPanel2);
 		
@@ -147,17 +180,16 @@ public class DisplayTwo implements StatementCreator
 		playerListPanel.setLayout(new GridLayout(0, 1));
 		playerListPanel.setBorder(playerListBorder);
 		
-		DefaultTableModel model = new DefaultTableModel();
 		model.addColumn("Login ID");
 		model.addColumn("Email");
 		model.addColumn("Password");
 		
-		model.addRow(new Object[] {"temp0", "temp1", "temp2"});
+		table.addMouseListener(this);
 		
-		JTable table = new JTable(model);
 		JScrollPane pane = new JScrollPane(table);
 		
 		playerListPanel.add(pane);
+		
 		
 		return playerListPanel;
 	}
@@ -203,6 +235,8 @@ public class DisplayTwo implements StatementCreator
 						{
 							e1.getMessage();
 						}
+						
+						refreshJTable(model); 
 					}
 					catch (NumberFormatException n)
 					{
@@ -274,10 +308,11 @@ public class DisplayTwo implements StatementCreator
 							editToThisEmail = editPlayerEmail.getText();
 							editToThisPassword = editPassword.getText();
 
-							//this try/catch clock accounts for SQL execution exceptions
+							//this try/catch block accounts for SQL execution exceptions
 							try 
 							{
 								update();
+								
 								editLoginID.setText("");
 								editPlayerEmail.setText("");
 								editPassword.setText("");
@@ -295,6 +330,8 @@ public class DisplayTwo implements StatementCreator
 						{
 							editLoginID.setText("Numbers only.");
 						}
+						
+						refreshJTable(model); 
 					}
 					catch (NumberFormatException n)
 					{
@@ -366,6 +403,8 @@ public class DisplayTwo implements StatementCreator
 						{
 							System.out.println(e1.getMessage());
 						}
+						
+						refreshJTable(model); 
 					}
 					catch (NumberFormatException n)
 					{
@@ -437,6 +476,93 @@ public class DisplayTwo implements StatementCreator
 		ps.executeUpdate();
 		
 		System.out.print("Delete: " + deleteThisID);
+	}
+
+	/**
+	 * used in add, edit, and delete buttons to refresh and display updated values in the JTable
+	 * @param model
+	 */
+	private void refreshJTable(DefaultTableModel model) 
+	{
+		String selectStmt = "SELECT * FROM Player";
+		
+		Statement stmt;
+		
+		//clears the table
+		while(model.getRowCount() > 0)
+		{
+		    model.removeRow(0);
+		}
+		
+		//this try/catch accounts for an SQL exception when creating a statement
+		try 
+		{
+			stmt = m_dbConn.createStatement();
+			
+			//this try/catch accounts for an SQL exception when executing a query
+			try 
+			{
+				ResultSet rs = stmt.executeQuery(selectStmt);
+				while (rs.next())
+				{
+					int loginID = rs.getInt(1);
+					String password = rs.getString(2);
+					String email = rs.getString(3);
+					
+					model.addRow(new Object[]{loginID, email, password});
+				}
+			} 
+			catch (SQLException e1) 
+			{
+				System.out.println(e1.getMessage());
+			}
+			stmt.close();
+		} 
+		catch (SQLException e2) 
+		{
+			System.out.println(e2.getMessage());
+		}
+	}
+	
+	/**
+	 * when a JTable entry is clicked, it will execute these actions
+	 */
+	@Override
+	public void mouseClicked(MouseEvent e) 
+	{
+		int index = table.getSelectedRow();
+		String loginID = model.getValueAt(index, 0).toString();
+		String email = model.getValueAt(index, 1).toString();
+		String password = model.getValueAt(index, 2).toString();
+		
+		//TODO: use textviews in selected player panel to display
+		selectedLoginID.setText(loginID);
+		selectedPlayerEmail.setText(email);
+		selectedPlayerPassword.setText(password);
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) 
+	{
+		//unneeded, can't get rid of it since i implemented MouseListener interface
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) 
+	{
+		//unneeded, can't get rid of it since i implemented MouseListener interface	
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) 
+	{
+		//unneeded, can't get rid of it since i implemented MouseListener interface
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) 
+	{
+		//unneeded, can't get rid of it since i implemented MouseListener interface
 	}
 	
 	
