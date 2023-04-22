@@ -52,11 +52,13 @@ public class ConnectivityFramework {
 	{
 	
 		//statements need to be executed in this order
-		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
-		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
-		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
-		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
-		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
+//		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
+//		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
+//		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
+//		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
+//		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
+//		getCF().populatePlayerTable();
+		getCF().populateAbilityTable();
 	}
  
     /**
@@ -167,8 +169,7 @@ public class ConnectivityFramework {
             "Execute_Time INTEGER NOT NULL," +
             "Ability_Type varchar(7) NOT  NULL" +  
             " );";
-    
-    
+       
     protected Connection m_dbConn = null;
    
    
@@ -200,9 +201,105 @@ public class ConnectivityFramework {
     	stmt.executeUpdate(insertData);
     }
     
-    public void populateTables()
+    /**
+     * call to populate Player table with 5 entries
+     * by: Rachel
+     * @throws SQLException
+     */
+    public void populatePlayerTable() throws SQLException
     {
+    	String[][] playerEntries = new String[5][3];
+    	playerEntries[0][0] = "123"; playerEntries[0][1] = "password"; playerEntries[0][2] ="rachelj@gmail.com";
+    	playerEntries[1][0] = "234"; playerEntries[1][1] = "hello22"; playerEntries[1][2] = "tylerl22@ship.edu";
+    	playerEntries[2][0] = "345"; playerEntries[2][1] = "hey8903"; playerEntries[2][2] = "aleciam41@msn.com";
+    	playerEntries[3][0] = "456"; playerEntries[3][1] = "cool20"; playerEntries[3][2] = "brian45@outlook.com";
+    	playerEntries[4][0] = "567"; playerEntries[4][1] = "csc471"; playerEntries[4][2] = "drgirard@ship.edu";
     	
+    	String insertStmt = "INSERT INTO Player (P_login, P_Password, P_Email) VALUES (?, ?, ?);";
+    	PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+    	for (int i = 0; i < 5; i++)
+    	{
+    		for (int j = 0; j < 3; j++)
+    		{
+    			if (j == 0)
+    			{
+    				int n = Integer.parseInt(playerEntries[i][j]);
+    				ps.setInt(j+1, n);
+    			}
+    			else
+    			{
+    				ps.setString(j+1, playerEntries[i][j]);
+    			}
+    		}
+    		ps.executeUpdate();
+    	}
+    	System.out.println("populatePlayerTable() added 5 entries to Player.");
+    }
+    
+    /**
+     * call to populate Location table with 5 entries
+     */
+    public void populateLocationTable()
+    {
+    	//TODO: Alecia
+    }
+    
+    /**
+     * call to populate CharInfo table with 5 different entries
+     */
+    public void populateCharTable()
+    {
+    	//TODO: Tyler
+    }
+    
+    /**
+     * call to populate Ability table with 5 different entries
+     * @throws SQLException 
+     */
+    public void populateAbilityTable() throws SQLException
+    {
+        String[][] abilityEntries = new String[5][9];
+        abilityEntries[0][0] = "1"; abilityEntries[0][1] = "15"; abilityEntries[0][2] = "10.0"; abilityEntries[0][3] = "50.5"; abilityEntries[0][4] = "3.3"; abilityEntries[0][5] = "No"; abilityEntries[0][6] = "2"; abilityEntries[0][7] = "3"; abilityEntries[0][8] = "Speed";  
+        abilityEntries[1][0] = "2"; abilityEntries[1][1] = "10"; abilityEntries[1][2] = "5.5"; abilityEntries[1][3] = "25.5"; abilityEntries[1][4] = "2.2"; abilityEntries[1][5] = "Yes"; abilityEntries[1][6] = "1"; abilityEntries[1][7] = "4"; abilityEntries[1][8] = "Heal";
+        abilityEntries[2][0] = "3"; abilityEntries[2][1] = "20"; abilityEntries[2][2] = "7.25"; abilityEntries[2][3] = "20.2"; abilityEntries[2][4] = "3.4"; abilityEntries[2][5] = "Yes"; abilityEntries[2][6] = "3"; abilityEntries[2][7] = "2"; abilityEntries[2][8] = "Invis"; 
+        abilityEntries[3][0] = "4"; abilityEntries[3][1] = "5"; abilityEntries[3][2] = "15.2"; abilityEntries[3][3] = "30.6"; abilityEntries[3][4] = "4.5"; abilityEntries[3][5] = "No"; abilityEntries[3][6] = "4"; abilityEntries[3][7] = "1"; abilityEntries[3][8] = "2xDam";
+        abilityEntries[4][0] = "5"; abilityEntries[4][1] = "25"; abilityEntries[4][2] = "20.1"; abilityEntries[4][3] = "22.6"; abilityEntries[4][4] = "5.6"; abilityEntries[4][5] = "No"; abilityEntries[4][6] = "3"; abilityEntries[4][7] = "2"; abilityEntries[4][8] = "Blast"; 
+    	
+    	String insertStmt = "INSERT INTO Ability (Ability_id, Hit_Points, Strength, Stamina, Repeat_Rate, Repeating, Repeat_Time, Execute_Time, Ability_Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    	PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+    	
+    	for (int i = 0; i < 5; i++)
+    	{
+    		for (int j = 0; j < 9; j++)
+    		{
+    			//int attributes
+    			if ((j == 0) || (j == 1) || (j == 6) || (j == 7))
+    			{
+    				int x = Integer.parseInt(abilityEntries[i][j]);
+    				ps.setInt(j+1, x);
+    			}
+    			//real attributes
+    			else if ((j == 2) || (j == 3) || (j == 4))
+    			{
+    				double x = Double.parseDouble(abilityEntries[i][j]);
+    				ps.setDouble(j+1, x);
+    			}
+    			//char attributes
+    			else if ((j == 5) || (j == 8))
+    			{
+    				ps.setString(j+1, abilityEntries[i][j]);
+    			}
+    		}
+    		ps.executeUpdate();
+    	}
+    }
+    
+    /**
+     * call to populate Weapons table with 5 different entries
+     */
+    public void populateWeaponsTable()
+    {
+    	//TODO: Brian
     }
 }
 

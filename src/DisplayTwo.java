@@ -197,6 +197,7 @@ public class DisplayTwo implements StatementCreator
 						try 
 						{
 							delete();
+							deleteLoginID.setText("");
 						} 
 						catch (SQLException e1) 
 						{
@@ -277,6 +278,10 @@ public class DisplayTwo implements StatementCreator
 							try 
 							{
 								update();
+								editLoginID.setText("");
+								editPlayerEmail.setText("");
+								editPassword.setText("");
+								editThisPlayer.setText("");
 							} 
 							catch (SQLException e1) 
 							{
@@ -353,7 +358,11 @@ public class DisplayTwo implements StatementCreator
 						try 
 						{
 							insert();
-						} catch (SQLException e1) 
+							loginID.setText("");
+							playerEmail.setText("");
+							password.setText("");
+						} 
+						catch (SQLException e1) 
 						{
 							System.out.println(e1.getMessage());
 						}
@@ -362,6 +371,7 @@ public class DisplayTwo implements StatementCreator
 					{
 						loginID.setText("Numbers only");
 					}
+					
 				}
 			}
 		);
