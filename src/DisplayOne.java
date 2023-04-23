@@ -3,8 +3,12 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.awt.event.ActionEvent;
@@ -90,6 +94,14 @@ public class DisplayOne {
     JPanel SelectedCharacterPanel = new JPanel();
     SelectedCharacterPanel.setLayout(new GridLayout(0, 1));
     SelectedCharacterPanel.setBorder(SelectedCharacterBorder);
+    
+    DefaultTableModel model = new DefaultTableModel();
+	JTable table = new JTable(model);
+	
+    JScrollPane pane = new JScrollPane(table);
+    pane.setVisible(true);
+    SelectedCharacterPanel.add(pane);
+    
     return SelectedCharacterPanel;
   }
 
