@@ -13,7 +13,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -25,6 +27,17 @@ public class DisplayOne {
 
   String deleteThisCharacter;
   String Char_Attributes;
+  
+  String characterName;
+  int characterStrength;
+  int characterStamina;
+  int characterCHP;
+  int characterMHP;
+  int playerID;
+  
+  private static final String TABLE_NAME = "CharInfo";
+  private ConnectivityFramework cf = ConnectivityFramework.getCF();
+  private Connection m_dbConn = cf.getConnection();
   
   public DisplayOne() {
     
@@ -195,12 +208,12 @@ public class DisplayOne {
           String characterAttributes;
           public void actionPerformed(ActionEvent e)
           {           
-            String characterName = char_Name.getText();
-            String characterStrength = char_Strength.getText();
-            String characterStamina = char_Stamina.getText();
-            String character_Current = char_Current_Hit_points.getText();
-            String character_Max = Char_Max_Hit_points.getText();
-            String player_ID = Player_Id.getText();
+            characterName = char_Name.getText();
+            characterStrength = Integer.parseInt(char_Strength.getText());
+            characterStamina = Integer.parseInt(char_Stamina.getText());
+            characterCHP = Integer.parseInt(char_Current_Hit_points.getText());
+            characterMHP = Integer.parseInt(Char_Max_Hit_points.getText());
+            playerID = Integer.parseInt(Player_Id.getText());
             
             characterAttributes = characterName + "," + characterStrength + "," + characterStamina;
             System.out.println(characterAttributes);
@@ -262,8 +275,43 @@ public class DisplayOne {
     return UpdateCharacterPanel;
   }
   
+  /**
+	 * implemented by StatementCreator interface
+	 * creates an INSERT statement
+	 */
+  public void insert() throws SQLException
+	{
+		String insertStmt = "INSERT INTO " + TABLE_NAME + " (Char_Name, char_Strength, char_Stamina, char_Current_Hit_Points, Char_Max_Hit_Points, Player_ID) VALUES (?, ?, ?, ?, ?, ?);";
+		PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+		ps.setString(1, characterName);
+		ps.setInt(2, characterStrength);
+		ps.setInt(3, characterStamina);
+		ps.setInt(4, characterCHP);
+		ps.setInt(5, characterMHP);
+		ps.setInt(6, playerID);
+  	
+		ps.executeUpdate();
+		
+		System.out.println("Insert: " + characterName + "," + characterStrength + "," + characterStamina + "," + characterCHP + "," + characterMHP + "," + playerID);
+	}
   
-  
+	/**
+	 * implemented by StatementCreator interface
+	 * creates an UPDATE statement
+	 */
+	public void update() throws SQLException
+	{
+		String updateStmt = "UPDATE " + TABLE_NAME + " SET Char_Name = ?, char_Strength = ?, char_Stamina = ?, char_Current_Hit_Points = ?, Char_Max_Hit_Points = ?, Player_ID = ?;";
+		PreparedStatement ps = m_dbConn.prepareStatement(updateStmt);
+		ps.setInt(1, editToThisLoginID);
+		ps.setString(2, editToThisPassword);
+		ps.setString(3, editToThisEmail);
+		ps.setInt(4, playerToBeEdited);
+  	
+		ps.executeUpdate();
+		
+		System.out.println("Update " + playerToBeEdited + "to: " + editToThisLoginID + "," + editToThisPassword + "," + editToThisEmail);
+	}
   
   public static void main(String[] args) {
     new DisplayOne();
