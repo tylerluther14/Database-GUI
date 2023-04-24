@@ -40,11 +40,15 @@ public class DisplayOne {
   int playerID;
   
   //Update Variables
+  String updateNameU;
   String characterNameU;
   int characterStrengthU;
   int characterStaminaU;
   int characterCHPU;
   int characterMHPU;
+  
+  //Delete variables
+  String deleteCharacterD;
   
   //character table
   DefaultTableModel model = new DefaultTableModel();
@@ -164,22 +168,28 @@ public class DisplayOne {
     d.addActionListener(
         new ActionListener()
         {
-          String deletedCharacter;
+          
           public void actionPerformed(ActionEvent e)
           {
-            deletedCharacter = char_NameD.getText();
-            System.out.println(deletedCharacter);
-            deleteThisCharacter = deletedCharacter;
-            new Timer().schedule(
-              new TimerTask() {
-                @Override
-                public void run()
-                {
-                  char_NameD.setText("Char_Name");
-                }
-              },
-              3000
-              );
+            try {
+              
+              deleteCharacterD = char_NameD.getText();
+              
+              try {
+                
+                delete();
+                char_NameD.setText("");
+                
+              } catch (SQLException e1){
+                System.out.println(e1.getMessage());
+              }
+              
+              refreshCharacterListJTable(model); 
+              
+            } catch (NumberFormatException n){
+              
+            }
+        
           }
         }
         );
@@ -295,6 +305,9 @@ public class DisplayOne {
     UpdateCharacterPanel.setBorder(UpdateCharacterBorder);
     
     //update character panel fields
+    JTextField update_NameU = new JTextField();
+    JLabel update_NameUL = new JLabel("character Name to update");
+    
     JTextField char_NameU = new JTextField();
     JLabel char_NameUL = new JLabel("char_Name");
     
@@ -312,6 +325,9 @@ public class DisplayOne {
     
     //Update Character button
     JButton u = new JButton("Update Character");
+    
+    UpdateCharacterPanel.add(update_NameUL);
+    UpdateCharacterPanel.add(update_NameU);
     
     UpdateCharacterPanel.add(char_NameUL);
     UpdateCharacterPanel.add(char_NameU);
@@ -335,6 +351,7 @@ public class DisplayOne {
               public void actionPerformed(ActionEvent e)
               { 
                 try {
+                  updateNameU = update_NameU.getText();
                   characterNameU = char_NameU.getText();
                   characterStrengthU = Integer.parseInt(char_StrengthU.getText());
                   characterStaminaU = Integer.parseInt(char_StaminaU.getText());
@@ -346,16 +363,13 @@ public class DisplayOne {
                   } catch (SQLException e1) {
                     e1.getMessage();
                   }
-                  System.out.println("Updating To " + characterName + "," + characterStrength + "," + characterStamina + "," + 
-                      characterCHP + "," + characterMHP + "," + playerID);
+                  System.out.println("Updating To " + characterNameU + "," + characterStrengthU + "," + characterStaminaU + "," + 
+                      characterCHPU + "," + characterMHPU);
                   
-                } catch {
+                } catch (NumberFormatException n1){
                   
                 }
-                
-                characterAttributes = characterName + "," + characterStrength + "," + characterStamina;
-                System.out.println(characterAttributes);
-                Char_Attributes = characterAttributes;
+                refreshCharacterListJTable(model);
 
                 }
             }
@@ -391,18 +405,34 @@ public class DisplayOne {
 	 */
 	public void update() throws SQLException
 	{
-		String updateStmt = "UPDATE " + TABLE_NAME + " SET Char_Name = ?, char_Strength = ?, char_Stamina = ?, char_Current_Hit_Points = ?, Char_Max_Hit_Points = ?;";
+		String updateStmt = "UPDATE " + TABLE_NAME + " SET Char_Name = ?, char_Strength = ?, char_Stamina = ?, char_Current_Hit_Points = ?, Char_Max_Hit_Points = ? WHERE Char_Name = ?;";
 		PreparedStatement ps = m_dbConn.prepareStatement(updateStmt);
 		ps.setString(1, characterNameU);
 		ps.setInt(2, characterStrengthU);
 		ps.setInt(3, characterStaminaU);
 		ps.setInt(4, characterCHPU);
 		ps.setInt(5, characterMHPU);
+		ps.setString(6, updateNameU);
   	
 		ps.executeUpdate();
 		
-		System.out.println("Update " + characterNameU + "to: " + characterNameU + "," + characterStrengthU + "," + characterStaminaU + "," + characterCHPU + "," + characterMHPU);
+		System.out.println("Updating" + " " + updateNameU + " to: " + characterNameU + "," + characterStrengthU + "," + characterStaminaU + "," + characterCHPU + "," + characterMHPU);
 	}
+	
+	 /**
+   * implemented by StatementCreator interface
+   * creates a DELETE statement
+   */
+  public void delete() throws SQLException
+  {   
+    String deleteStmt = "DELETE FROM " + TABLE_NAME + " WHERE (Char_Name = ?);";
+    PreparedStatement ps = m_dbConn.prepareStatement(deleteStmt);
+    ps.setString(1, deleteCharacterD);
+    
+    ps.executeUpdate();
+    
+    System.out.print("Delete: " + deleteCharacterD);
+  }
 	
 	/**
 	 * used in add, edit, and delete buttons to refresh and display updated values in the JTable
