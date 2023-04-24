@@ -323,8 +323,8 @@ public class DisplayOne implements StatementCreator, MouseListener{
           String characterAttributes;
           public void actionPerformed(ActionEvent e)
           {
-        	  try {
-        		      characterName = char_Name.getText();
+            try {
+                  characterName = char_Name.getText();
                   characterStrength = Integer.parseInt(char_Strength.getText());
                   characterStamina = Integer.parseInt(char_Stamina.getText());
                   characterCHP = Integer.parseInt(char_Current_Hit_points.getText());
@@ -334,28 +334,28 @@ public class DisplayOne implements StatementCreator, MouseListener{
                   
                   System.out.println("Adding " + characterName + "," + characterStrength + "," + characterStamina + "," + 
                       characterCHP + "," + characterMHP + "," + playerID + "," + locationid);
-        		  
+              
                   try {
-                	  insert();
-                	  char_Strength.setText("");
-                	  char_Stamina.setText("");
-                	  char_Current_Hit_points.setText("");
-                	  Char_Max_Hit_points.setText("");
-                	  Player_Id.setText("");
-                	  location_ID.setText("");
-                	  
+                    insert();
+                    char_Strength.setText("");
+                    char_Stamina.setText("");
+                    char_Current_Hit_points.setText("");
+                    Char_Max_Hit_points.setText("");
+                    Player_Id.setText("");
+                    location_ID.setText("");
+                    
                   } catch (SQLException e1){
-                	  System.out.println(e1.getMessage());
+                    System.out.println(e1.getMessage());
                   }
                   
-        	  }	catch (NumberFormatException n) {
-				
-					
-				}
-        	  refreshCharacterListJTable(model);
+            } catch (NumberFormatException n) {
+        
+          
+        }
+            refreshCharacterListJTable(model);
           }
         }
-    );	  
+    );    
           
      
     
@@ -451,47 +451,47 @@ public class DisplayOne implements StatementCreator, MouseListener{
   }
   
   /**
-	 * implemented by StatementCreator interface
-	 * creates an INSERT statement
-	 */
+   * implemented by StatementCreator interface
+   * creates an INSERT statement
+   */
   public void insert() throws SQLException
-	{
-		String insertStmt = "INSERT INTO " + TABLE_NAME + " (Char_Name, char_Strength, char_Stamina, char_Current_Hit_Points, Char_Max_Hit_Points, Player_ID, Location_ID) VALUES (?, ?, ?, ?, ?, ?, ?);";
-		PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
-		ps.setString(1, characterName);
-		ps.setInt(2, characterStrength);
-		ps.setInt(3, characterStamina);
-		ps.setInt(4, characterCHP);
-		ps.setInt(5, characterMHP);
-		ps.setInt(6, playerID);
-		ps.setInt(7, locationid);
-  	
-		ps.executeUpdate();
-		
-		System.out.println("Insert: " + characterName + "," + characterStrength + "," + characterStamina + "," + characterCHP + "," + characterMHP + "," + playerID + "," + locationid);
-	}
+  {
+    String insertStmt = "INSERT INTO " + TABLE_NAME + " (Char_Name, char_Strength, char_Stamina, char_Current_Hit_Points, Char_Max_Hit_Points, Player_ID, Location_ID) VALUES (?, ?, ?, ?, ?, ?, ?);";
+    PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+    ps.setString(1, characterName);
+    ps.setInt(2, characterStrength);
+    ps.setInt(3, characterStamina);
+    ps.setInt(4, characterCHP);
+    ps.setInt(5, characterMHP);
+    ps.setInt(6, playerID);
+    ps.setInt(7, locationid);
+    
+    ps.executeUpdate();
+    
+    System.out.println("Insert: " + characterName + "," + characterStrength + "," + characterStamina + "," + characterCHP + "," + characterMHP + "," + playerID + "," + locationid);
+  }
   
-	/**
-	 * implemented by StatementCreator interface
-	 * creates an UPDATE statement
-	 */
-	public void update() throws SQLException
-	{
-		String updateStmt = "UPDATE " + TABLE_NAME + " SET Char_Name = ?, char_Strength = ?, char_Stamina = ?, char_Current_Hit_Points = ?, Char_Max_Hit_Points = ? WHERE Char_Name = ?;";
-		PreparedStatement ps = m_dbConn.prepareStatement(updateStmt);
-		ps.setString(1, characterNameU);
-		ps.setInt(2, characterStrengthU);
-		ps.setInt(3, characterStaminaU);
-		ps.setInt(4, characterCHPU);
-		ps.setInt(5, characterMHPU);
-		ps.setString(6, updateNameU);
-  	
-		ps.executeUpdate();
-		
-		System.out.println("Updating" + " " + updateNameU + " to: " + characterNameU + "," + characterStrengthU + "," + characterStaminaU + "," + characterCHPU + "," + characterMHPU);
-	}
-	
-	 /**
+  /**
+   * implemented by StatementCreator interface
+   * creates an UPDATE statement
+   */
+  public void update() throws SQLException
+  {
+    String updateStmt = "UPDATE " + TABLE_NAME + " SET Char_Name = ?, char_Strength = ?, char_Stamina = ?, char_Current_Hit_Points = ?, Char_Max_Hit_Points = ? WHERE Char_Name = ?;";
+    PreparedStatement ps = m_dbConn.prepareStatement(updateStmt);
+    ps.setString(1, characterNameU);
+    ps.setInt(2, characterStrengthU);
+    ps.setInt(3, characterStaminaU);
+    ps.setInt(4, characterCHPU);
+    ps.setInt(5, characterMHPU);
+    ps.setString(6, updateNameU);
+    
+    ps.executeUpdate();
+    
+    System.out.println("Updating" + " " + updateNameU + " to: " + characterNameU + "," + characterStrengthU + "," + characterStaminaU + "," + characterCHPU + "," + characterMHPU);
+  }
+  
+   /**
    * implemented by StatementCreator interface
    * creates a DELETE statement
    */
@@ -505,57 +505,57 @@ public class DisplayOne implements StatementCreator, MouseListener{
     
     System.out.print("Delete: " + deleteCharacterD);
   }
-	
-	/**
-	 * used in add, edit, and delete buttons to refresh and display updated values in the JTable
-	 * @param model
-	 */
-	private void refreshCharacterListJTable(DefaultTableModel model) 
-	{
-		String selectStmt = "SELECT * FROM Player";
-		
-		Statement stmt;
-		
-		//clears the table
-		while(model.getRowCount() > 0)
-		{
-		    model.removeRow(0);
-		}
-		
-		//this try/catch accounts for an SQL exception when creating a statement
-		try 
-		{
-			stmt = m_dbConn.createStatement();
-			
-			//this try/catch accounts for an SQL exception when executing a query
-			try 
-			{
-				ResultSet rs = stmt.executeQuery(selectStmt);
-				while (rs.next())
-				{
-					String charName = rs.getString(1);
-					int charStren = rs.getInt(2);
-					int charStam = rs.getInt(3);
-					int charCHP = rs.getInt(4);
-					int charMHP = rs.getInt(5);
-					int playerid = rs.getInt(6);
-					int locID = rs.getInt(7);
-					
-					model.addRow(new Object[]{charName, charStren, charStam, charCHP, charMHP, playerid, locID});
-				}
-			} 
-			catch (SQLException e1) 
-			{
-				System.out.println(e1.getMessage());
-			}
-			stmt.close();
-		} 
-		catch (SQLException e2) 
-		{
-			System.out.println(e2.getMessage());
-		}
-	}
-	
+  
+  /**
+   * used in add, edit, and delete buttons to refresh and display updated values in the JTable
+   * @param model
+   */
+  private void refreshCharacterListJTable(DefaultTableModel model) 
+  {
+    String selectStmt = "SELECT * FROM Player";
+    
+    Statement stmt;
+    
+    //clears the table
+    while(model.getRowCount() > 0)
+    {
+        model.removeRow(0);
+    }
+    
+    //this try/catch accounts for an SQL exception when creating a statement
+    try 
+    {
+      stmt = m_dbConn.createStatement();
+      
+      //this try/catch accounts for an SQL exception when executing a query
+      try 
+      {
+        ResultSet rs = stmt.executeQuery(selectStmt);
+        while (rs.next())
+        {
+          String charName = rs.getString(1);
+          int charStren = rs.getInt(2);
+          int charStam = rs.getInt(3);
+          int charCHP = rs.getInt(4);
+          int charMHP = rs.getInt(5);
+          int playerid = rs.getInt(6);
+          int locID = rs.getInt(7);
+          
+          model.addRow(new Object[]{charName, charStren, charStam, charCHP, charMHP, playerid, locID});
+        }
+      } 
+      catch (SQLException e1) 
+      {
+        System.out.println(e1.getMessage());
+      }
+      stmt.close();
+    } 
+    catch (SQLException e2) 
+    {
+      System.out.println(e2.getMessage());
+    }
+  }
+  
   /**
    * execute when jtable clicked
    */
