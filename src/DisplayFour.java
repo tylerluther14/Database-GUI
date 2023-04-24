@@ -37,8 +37,9 @@ public class DisplayFour implements StatementCreator, MouseListener {
 
     /**
      * main method
+     * @throws SQLException 
      **/
-    public DisplayFour() {
+    public DisplayFour() throws SQLException {
 
         JFrame frame = new JFrame();
 
@@ -190,6 +191,8 @@ public class DisplayFour implements StatementCreator, MouseListener {
         frame.setTitle("Display Four");
         frame.pack();
         frame.setVisible(true);
+        
+        this.refreshJTable(model);
     }
 
     /**
@@ -256,9 +259,10 @@ public class DisplayFour implements StatementCreator, MouseListener {
      * Creates the location list panel
      *
      * @param args String[]
+     * @throws SQLException 
      */
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         new DisplayFour();
     }
 
