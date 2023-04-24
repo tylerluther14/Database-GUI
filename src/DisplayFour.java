@@ -26,18 +26,29 @@ public class DisplayFour implements StatementCreator, MouseListener {
 
     DefaultTableModel model = new DefaultTableModel();
     JTable table = new JTable(model);
+
+
     JTextField locationID;
+
 
     JTextField locationName;
 
     JTextField locationSize;
 
     JTextField locationType;
+    //JTextField locationID;
+
+    //JTextField locationName;
+
+    //JTextField locationSize;
+
+    // JTextField locationType;
 
 
     /**
      * main method
-     * @throws SQLException 
+     *
+     * @throws SQLException
      **/
     public DisplayFour() throws SQLException {
 
@@ -51,14 +62,14 @@ public class DisplayFour implements StatementCreator, MouseListener {
 
         //text fields for "Add Location" panel
         new JTextField("Location ID");
-        JTextField locationID;
+
 
         new JTextField("Location Name");
-        JTextField locationName;
+
         new JTextField("Location Size");
-        JTextField locationSize;
+
         new JTextField("Location Type");
-        JTextField locationType;
+
 
         //Add Location ID panel that has 3 rows
         Border locationIDBorder = BorderFactory.createTitledBorder("LOCATION ID");
@@ -154,7 +165,7 @@ public class DisplayFour implements StatementCreator, MouseListener {
         JTextField finalLocationID = locationID;
 
         addLocation.addActionListener(e -> {
-            String text = finalLocationID.getText();
+            int text = Integer.parseInt(finalLocationID.getText());
             String text1 = finalLocationName.getText();
             String text2 = finalLocationSize.getText();
             String text3 = finalLocationType.getText();
@@ -162,6 +173,25 @@ public class DisplayFour implements StatementCreator, MouseListener {
             System.out.println(text1);
             System.out.println(text2);
             System.out.println(text3);
+
+            //if add button is clicked, insert into database
+
+            try {
+                insert();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            finalLocationID.setText("");
+            finalLocationName.setText("");
+            finalLocationSize.setText("");
+            finalLocationType.setText("");
+
+
+            try {
+                refreshJTable(model);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 
 
         });
@@ -176,8 +206,9 @@ public class DisplayFour implements StatementCreator, MouseListener {
             finalLocationName.setText("");
             finalLocationSize.setText("");
             finalLocationType.setText("");
-//            refreshJTable(model);
+
         });
+
 
         frame.setLayout(new GridLayout(2, 4));
         frame.add(Panel1);
@@ -191,7 +222,7 @@ public class DisplayFour implements StatementCreator, MouseListener {
         frame.setTitle("Display Four");
         frame.pack();
         frame.setVisible(true);
-        
+
         this.refreshJTable(model);
     }
 
@@ -220,7 +251,7 @@ public class DisplayFour implements StatementCreator, MouseListener {
     }
 
     /**
-     * Creates the location list panel
+     * This table is suppose to refresh when the add button is clicked
      *
      * @return JPanel
      */
@@ -259,7 +290,7 @@ public class DisplayFour implements StatementCreator, MouseListener {
      * Creates the location list panel
      *
      * @param args String[]
-     * @throws SQLException 
+     * @throws SQLException
      */
 
     public static void main(String[] args) throws SQLException {
@@ -274,12 +305,13 @@ public class DisplayFour implements StatementCreator, MouseListener {
     @Override
     public void insert() throws SQLException {
 
-        PreparedStatement ps = m_dbConn.prepareStatement("INSERT INTO" + LOCATION_TABLE +
-                "(LocationID, LocationName, LocationSize, LocationType) VALUES (?, ?, ?, ?)");
-        ps.setString(1, "Location ID");
-        ps.setString(2, "Location Name");
-        ps.setString(3, "Location Size");
-        ps.setString(4, "Location Type");
+        PreparedStatement ps = m_dbConn.prepareStatement("INSERT INTO " + LOCATION_TABLE +
+                "(LOC_ID, Loc_Name, Loc_Size, Loc_Type) VALUES (?, ?, ?, ?)");
+        ps.setInt(1, Integer.parseInt(String.valueOf(this.locationID.getText())));
+        ps.setString(2, String.valueOf(locationName.getText()));
+        ps.setDouble(3, Double.parseDouble(String.valueOf(locationSize.getText())));
+        ps.setString(4, String.valueOf(locationType.getText()));
+        System.out.println(ps);
         ps.executeUpdate();
 
 
