@@ -60,6 +60,7 @@ public class ConnectivityFramework {
 		getCF().populatePlayerTable();
 		getCF().populateAbilityTable();
 		getCF().populateLocationTable();
+		getCF().populateCharTable();
 	}
  
     /**
