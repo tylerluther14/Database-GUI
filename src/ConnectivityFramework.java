@@ -52,14 +52,14 @@ public class ConnectivityFramework {
 	{
 	
 		//statements need to be executed in this order
-//		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
-//		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
-//		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
-//		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
-//		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
-//		getCF().populatePlayerTable();
+		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
+		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
+		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
+		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
+		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
+		getCF().populatePlayerTable();
 		getCF().populateAbilityTable();
-		getCF().populateCharTable();
+		getCF().populateLocationTable();
 	}
  
     /**
@@ -111,6 +111,7 @@ public class ConnectivityFramework {
     		+ "char_Current_Hit_Points INTEGER NOT NULL,"
     		+ "Char_Max_Hit_Points INTEGER NOT NULL,"
     		+ "Player_ID INTEGER NOT NULL,"
+    		+ "Location_ID INTEGER NOT NULL,"
     		+ "CONSTRAINT fk_CharInfo_Player FOREIGN KEY (Player_ID) REFERENCES Player(P_Login),"
     		+ "CONSTRAINT fk_CharInfo_Location FOREIGN KEY (Location_ID) REFERENCES Location(LOC_ID)"
     		+ ");";
@@ -149,9 +150,7 @@ public class ConnectivityFramework {
     		+ "LOC_ID INTEGER PRIMARY KEY,"
     		+ "Loc_Name VARCHAR(100) NOT NULL CHECK (LENGTH(Loc_Name) >= 3),"
     		+ "Loc_Size REAL NOT NULL,"
-    		+ "Loc_Type VARCHAR(20) NOT NULL CHECK (LENGTH(Loc_Type) >= 4),"
-    		+ "Lead_Id INTEGER,"
-    		+ "CONSTRAINT fk_leadid FOREIGN KEY (Lead_Id) REFERENCES Location(LOC_ID)"
+    		+ "Loc_Type VARCHAR(20) NOT NULL CHECK (LENGTH(Loc_Type) >= 4)"
     		+ ");";
     
     /**
@@ -239,53 +238,40 @@ public class ConnectivityFramework {
     /**
      * call to populate Location table with 5 entries
      */
-    public void populateLocationTable()
-    {
+    public void populateLocationTable() throws SQLException
+	{
+		String[][] locationEntries = new String[5][4];
+		locationEntries[0][0] = "123456"; locationEntries[0][1] = "Watery Grave"; locationEntries[0][2] = "4896.3"; locationEntries[0][3] = "Ocean";
+		locationEntries[1][0] = "654321"; locationEntries[1][1] = "Ancestral Caves"; locationEntries[1][2] = "1500.75"; locationEntries[1][3] = "Mountain";
+		locationEntries[2][0] = "785968"; locationEntries[2][1] = "Burning Plains"; locationEntries[2][2] = "333.7"; locationEntries[2][3] = "Desert";
+		locationEntries[3][0] = "285856"; locationEntries[3][1] = "Lost Woods"; locationEntries[3][2] = "117.85"; locationEntries[3][3] = "Forest";
+		locationEntries[4][0] = "456987"; locationEntries[4][1] = "Toxic Wasteland"; locationEntries[4][2] = "100.0"; locationEntries[4][3] = "Grassland";
+		String insertStmt = "INSERT INTO Location (LOC_ID, Loc_Name, Loc_Size, Loc_Type) VALUES (?, ?, ?, ?);";
+		PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (j == 0) {
+					int n = Integer.parseInt(locationEntries[i][j]);
+					ps.setInt(j+1, n);
+				}
+				else {
+					ps.setString(j+1, locationEntries[i][j]);
+				}
+			}
+			ps.executeUpdate();
+		}
+
     	//TODO: Alecia
     }
     
     /**
      * call to populate CharInfo table with 5 different entries
-     * By: Tyler
-     * @throws SQLException 
      */
-    public void populateCharTable() throws SQLException
+    public void populateCharTable()
     {
-    	String[][] characterEntries = new String[5][3];
-    	characterEntries[0][0] = "tyler"; characterEntries[0][1] = "50"; characterEntries[0][2] ="50"; characterEntries[0][3] = "50"; characterEntries[0][4] = "50"; characterEntries[0][5] = "123";
-    	characterEntries[1][0] = "rachel"; characterEntries[1][1] = "40"; characterEntries[1][2] = "40"; characterEntries[1][3] = "40"; characterEntries[1][4] = "40"; characterEntries[1][5] = "123";
-    	characterEntries[2][0] = "Brian"; characterEntries[2][1] = "30"; characterEntries[2][2] = "30"; characterEntries[2][3] = "30"; characterEntries[2][4] = "30"; characterEntries[2][5] = "123";
-    	characterEntries[3][0] = "Alecia"; characterEntries[3][1] = "20"; characterEntries[3][2] = "20"; characterEntries[3][3] = "20"; characterEntries[3][4] = "20"; characterEntries[3][5] = "123";
-    	characterEntries[4][0] = "bob"; characterEntries[4][1] = "10"; characterEntries[4][2] = "10"; characterEntries[4][3] = "10"; characterEntries[4][4] = "10"; characterEntries[4][5] = "123";
-    	
-    	String insertStmt = "INSERT INTO CharInfo (Char_Name, char_Strength, char_Stamina, char_Current_Hit_Points, Char_Max_Hit_Points, Player_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-    	PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
-    	for (int i = 0; i < 5; i++)
-    	{
-    		for (int j = 0; j < 6; j++)
-    		{
-    			//int attributes
-    			if ((j == 1) || (j == 2) || (j == 3) || (j == 4) || (j == 5))
-    			{
-    				int x = Integer.parseInt(characterEntries[i][j]);
-    				ps.setInt(j+1, x);
-    			}
-    			//real attributes
-    			else if ((j == 2) || (j == 3) || (j == 4))
-    			{
-    				double x = Double.parseDouble(characterEntries[i][j]);
-    				ps.setDouble(j+1, x);
-    			}
-    			//char attributes
-    			else if ((j == 5) || (j == 8))
-    			{
-    				ps.setString(j+1, characterEntries[i][j]);
-    			}
-    		}
-    		ps.executeUpdate();
-    	}
+    	//TODO: Tyler
     }
-
     
     /**
      * call to populate Ability table with 5 different entries

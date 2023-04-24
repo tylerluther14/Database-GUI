@@ -1,3 +1,4 @@
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
 /**
@@ -27,7 +28,5 @@ public interface StatementCreator
 	 * @throws SQLException
 	 */
 	public void delete() throws SQLException;
-	
-	//we might need select??? for displaying the entries on each of our displays...not sure tho
-	
+		
 }

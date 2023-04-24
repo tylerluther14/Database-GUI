@@ -63,8 +63,8 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	/**
 	 * these are objects for the Player List panel
 	 */
-	DefaultTableModel model = new DefaultTableModel();
-	JTable table = new JTable(model);
+	DefaultTableModel playerListmodel = new DefaultTableModel();
+	JTable playerListTable = new JTable(playerListmodel);
 	
 	/**
 	 * these are objects for the Selected Player panel
@@ -72,7 +72,8 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	JTextField selectedLoginID;
 	JTextField selectedPlayerEmail;
 	JTextField selectedPlayerPassword;
-	JTextField selectedPlayerCharacterList;
+	DefaultTableModel charListModel = new DefaultTableModel();
+	JTable selectedPlayerCharacterList;
 	
 	/**
 	 * constant for my table name
@@ -124,7 +125,7 @@ public class DisplayTwo implements StatementCreator, MouseListener
 		frame.pack();
 		frame.setVisible(true);
 		
-		this.refreshJTable(model);
+		this.refreshPlayerListJTable(playerListmodel);
 		
 	}
 
@@ -165,8 +166,12 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	//create panel for right side of selected player panel
 		JPanel subPanel2 = new JPanel();
 		subPanel2.setLayout(new GridLayout(0, 1));
-		selectedPlayerCharacterList = new JTextField("Character List TEMP: should be a list");
-		selectedPlayerPanel.add(selectedPlayerCharacterList);
+		
+		selectedPlayerCharacterList = new JTable(charListModel);
+		charListModel.addColumn("Character name");
+		JScrollPane pane = new JScrollPane(selectedPlayerCharacterList);
+		
+		selectedPlayerPanel.add(pane);
 		
 	//combine sub-panels
 		selectedPlayerPanel.add(subPanel);
@@ -187,16 +192,15 @@ public class DisplayTwo implements StatementCreator, MouseListener
 		playerListPanel.setLayout(new GridLayout(0, 1));
 		playerListPanel.setBorder(playerListBorder);
 		
-		model.addColumn("Login ID");
-		model.addColumn("Email");
-		model.addColumn("Password");
+		playerListmodel.addColumn("Login ID");
+		playerListmodel.addColumn("Email");
+		playerListmodel.addColumn("Password");
 		
-		table.addMouseListener(this);
+		playerListTable.addMouseListener(this);
 		
-		JScrollPane pane = new JScrollPane(table);
+		JScrollPane pane = new JScrollPane(playerListTable);
 		
 		playerListPanel.add(pane);
-		
 		
 		return playerListPanel;
 	}
@@ -240,10 +244,10 @@ public class DisplayTwo implements StatementCreator, MouseListener
 						} 
 						catch (SQLException e1) 
 						{
-							e1.getMessage();
+							System.out.println(e1.getMessage());
 						}
 						
-						refreshJTable(model); 
+						refreshPlayerListJTable(playerListmodel); 
 					}
 					catch (NumberFormatException n)
 					{
@@ -338,7 +342,7 @@ public class DisplayTwo implements StatementCreator, MouseListener
 							editLoginID.setText("Numbers only.");
 						}
 						
-						refreshJTable(model); 
+						refreshPlayerListJTable(playerListmodel); 
 					}
 					catch (NumberFormatException n)
 					{
@@ -411,7 +415,7 @@ public class DisplayTwo implements StatementCreator, MouseListener
 							System.out.println(e1.getMessage());
 						}
 						
-						refreshJTable(model); 
+						refreshPlayerListJTable(playerListmodel); 
 					}
 					catch (NumberFormatException n)
 					{
@@ -489,7 +493,7 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	 * used in add, edit, and delete buttons to refresh and display updated values in the JTable
 	 * @param model
 	 */
-	private void refreshJTable(DefaultTableModel model) 
+	private void refreshPlayerListJTable(DefaultTableModel model) 
 	{
 		String selectStmt = "SELECT * FROM Player";
 		
@@ -537,15 +541,52 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	@Override
 	public void mouseClicked(MouseEvent e) 
 	{
-		int index = table.getSelectedRow();
-		String loginID = model.getValueAt(index, 0).toString();
-		String email = model.getValueAt(index, 1).toString();
-		String password = model.getValueAt(index, 2).toString();
+		int index = playerListTable.getSelectedRow();
+		String loginID = playerListmodel.getValueAt(index, 0).toString();
+		String email = playerListmodel.getValueAt(index, 1).toString();
+		String password = playerListmodel.getValueAt(index, 2).toString();
 		
-		//TODO: use textviews in selected player panel to display
+		//displays selected player in text views of Selected Player panel
 		selectedLoginID.setText(loginID);
 		selectedPlayerEmail.setText(email);
 		selectedPlayerPassword.setText(password);
+		
+		//displays selected player's character list in charList table
+		try
+		{
+			refreshCharListJTable(loginID);
+		}
+		catch (SQLException s)
+		{
+			System.out.println(s.getMessage());
+		}
+			
+	}
+
+	/**
+	 * used when a mouseClicked event happens, refreshes and populates character list table 
+	 * in selected player panel when a player is clicked.
+	 * @param loginID
+	 * @throws SQLException
+	 */
+	private void refreshCharListJTable(String loginID) throws SQLException 
+	{
+		String selectStmt = "SELECT Char_Name FROM CharInfo WHERE P_Login = ?";
+		PreparedStatement ps = m_dbConn.prepareStatement(selectStmt);
+		ps.setInt(0, Integer.parseInt(loginID));
+		ResultSet rs = ps.executeQuery();
+		
+		//clears the table
+		while(charListModel.getRowCount() > 0)
+		{
+		    charListModel.removeRow(0);
+		}
+		
+		while (rs.next())
+		{
+			String charName = rs.getString(1);
+			charListModel.addRow(new Object[]{charName});
+		}
 	}
 
 	@Override
