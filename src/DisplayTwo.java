@@ -44,14 +44,10 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	 * all of these are objects for the Edit Player Panel
 	 */
 	JButton editPlayerButton;
-	JTextField editLoginID;
 	JTextField editPlayerEmail; //has to be 15-50 characters
-	JTextField editPassword; //has to be between 5-10 characters
 	JTextField editThisPlayer;
 	int playerToBeEdited;
-	int editToThisLoginID;
 	String editToThisEmail;
-	String editToThisPassword;
 
 	/**
 	 * all of these are objects for the Delete Player panel
@@ -219,7 +215,7 @@ public class DisplayTwo implements StatementCreator, MouseListener
 		
 		//text fields for "Delete Player" panel
 		JLabel loginLabel = new JLabel("ID of player: ");
-		deleteLoginID = new JTextField("Login ID");
+		deleteLoginID = new JTextField();
 		
 		deletePlayerPanel.add(loginLabel);
 		deletePlayerPanel.add(deleteLoginID);
@@ -275,28 +271,17 @@ public class DisplayTwo implements StatementCreator, MouseListener
 		editPlayerPanel.setBorder(editPlayerBorder);
 		
 		//texts fields for "Edit Player" panel
-		JLabel loginIDLabel = new JLabel("New Login ID: ");
-		editLoginID = new JTextField();
-		
 		JLabel emailLabel = new JLabel("New Email: ");
 		editPlayerEmail = new JTextField();
 		editPlayerEmail.setDocument(new JTextFieldCharLimiter(50));
-		
-		JLabel passwordLabel = new JLabel("New Password: ");
-		editPassword = new JTextField();
-		editPassword.setDocument(new JTextFieldCharLimiter(10));
 		
 		JLabel editThisPlayerLabel = new JLabel("ID of player to be edited: ");
 		editThisPlayer = new JTextField();
 
 		editPlayerPanel.add(editThisPlayerLabel);
 		editPlayerPanel.add(editThisPlayer);
-		editPlayerPanel.add(loginIDLabel);
-		editPlayerPanel.add(editLoginID);
 		editPlayerPanel.add(emailLabel);
 		editPlayerPanel.add(editPlayerEmail);
-		editPlayerPanel.add(passwordLabel);
-		editPlayerPanel.add(editPassword);
 		
 		//add buttons to send whats in text fields
 		editPlayerButton = new JButton("Enter");
@@ -311,36 +296,23 @@ public class DisplayTwo implements StatementCreator, MouseListener
 					{
 						playerToBeEdited = Integer.parseInt(editThisPlayer.getText());
 						
-						//this try/catch block accounts for the updated player ID
-						try
+						editToThisEmail = editPlayerEmail.getText();
+						
+						//this try/catch block accounts for SQL execution exceptions
+						try 
 						{
-							editToThisLoginID = Integer.parseInt(editLoginID.getText());
-							//TODO: figure out how to set a minimum for email and password
-							editToThisEmail = editPlayerEmail.getText();
-							editToThisPassword = editPassword.getText();
-
-							//this try/catch block accounts for SQL execution exceptions
-							try 
-							{
-								update();
-								
-								editLoginID.setText("");
-								editPlayerEmail.setText("");
-								editPassword.setText("");
-								editThisPlayer.setText("");
-							} 
-							catch (SQLException e1) 
-							{
-								e1.getMessage();
-							}
-					
-							System.out.println("Edit this player: " + playerToBeEdited);
-							System.out.println("Update to this: " + editToThisLoginID + "," + editToThisEmail + "," + editToThisPassword);
-						}
-						catch (NumberFormatException n1)
+							update();
+							
+							editPlayerEmail.setText("");
+							editThisPlayer.setText("");
+						} 
+						catch (SQLException e1) 
 						{
-							editLoginID.setText("Numbers only.");
+							e1.getMessage();
 						}
+				
+						System.out.println("Edit this player: " + playerToBeEdited);							
+						System.out.println("Update email to this: " + editToThisEmail);
 						
 						refreshPlayerListJTable(playerListmodel); 
 					}
@@ -462,16 +434,14 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	 */
 	public void update() throws SQLException
 	{
-		String updateStmt = "UPDATE " + TABLE_NAME + " SET P_Login = ?, P_Password = ?, P_email = ? WHERE P_login = ?;";
+		String updateStmt = "UPDATE " + TABLE_NAME + " SET P_email = ? WHERE P_login = ?;";
 		PreparedStatement ps = m_dbConn.prepareStatement(updateStmt);
-		ps.setInt(1, editToThisLoginID);
-		ps.setString(2, editToThisPassword);
-		ps.setString(3, editToThisEmail);
-		ps.setInt(4, playerToBeEdited);
+		ps.setString(1, editToThisEmail);
+		ps.setInt(2, playerToBeEdited);
     	
 		ps.executeUpdate();
 		
-		System.out.println("Update " + playerToBeEdited + "to: " + editToThisLoginID + "," + editToThisPassword + "," + editToThisEmail);
+		System.out.println("Update " + playerToBeEdited + "to: " + editToThisEmail);
 	}
 	
 	/**
@@ -571,9 +541,10 @@ public class DisplayTwo implements StatementCreator, MouseListener
 	 */
 	private void refreshCharListJTable(String loginID) throws SQLException 
 	{
-		String selectStmt = "SELECT Char_Name FROM CharInfo WHERE P_Login = ?";
+		String selectStmt = "SELECT Char_Name FROM CharInfo WHERE Player_ID = ?;";
 		PreparedStatement ps = m_dbConn.prepareStatement(selectStmt);
-		ps.setInt(0, Integer.parseInt(loginID));
+		int ID = Integer.parseInt(loginID);
+		ps.setInt(1, ID);
 		ResultSet rs = ps.executeQuery();
 		
 		//clears the table
