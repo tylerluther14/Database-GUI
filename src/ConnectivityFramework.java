@@ -52,14 +52,14 @@ public class ConnectivityFramework {
 	{
 	
 		//statements need to be executed in this order
-//		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
-//		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
-//		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
-//		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
-//		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
-//		getCF().populatePlayerTable();
-//		getCF().populateAbilityTable();
-//		getCF().populateLocationTable();
+		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
+		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
+		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
+		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
+		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
+		getCF().populatePlayerTable();
+		getCF().populateAbilityTable();
+		getCF().populateLocationTable();
 		getCF().populateCharTable();
 	}
  
