@@ -112,6 +112,7 @@ public class ConnectivityFramework {
     		+ "char_Current_Hit_Points INTEGER NOT NULL,"
     		+ "Char_Max_Hit_Points INTEGER NOT NULL,"
     		+ "Player_ID INTEGER NOT NULL,"
+    		+ "Location_ID INTEGER NOT NULL"
     		+ "CONSTRAINT fk_CharInfo_Player FOREIGN KEY (Player_ID) REFERENCES Player(P_Login),"
     		+ "CONSTRAINT fk_CharInfo_Location FOREIGN KEY (Location_ID) REFERENCES Location(LOC_ID)"
     		+ ");";
