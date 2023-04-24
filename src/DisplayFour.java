@@ -11,8 +11,16 @@ import java.util.logging.Logger;
 
 import javax.swing.table.DefaultTableModel;
 
-public class DisplayFour implements StatementCreator, MouseListener
-{
+
+/**
+ * @author Alecia Meredith
+ * Creates a GUI for the user to view the Location table
+ * contains methods for SQL statements
+ */
+public class DisplayFour implements StatementCreator, MouseListener {
+
+
+    private static final String LOCATION_TABLE = "Location";
     private ConnectivityFramework cf = ConnectivityFramework.getCF();
     private Connection m_dbConn = cf.getConnection();
 
@@ -27,10 +35,9 @@ public class DisplayFour implements StatementCreator, MouseListener
     JTextField locationType;
 
 
-
-
-
-
+    /**
+     * main method
+     **/
     public DisplayFour() {
 
         JFrame frame = new JFrame();
@@ -130,10 +137,10 @@ public class DisplayFour implements StatementCreator, MouseListener
 
         JTextField finalLocationType = locationType;
         editLocationName.addActionListener(e -> finalLocationType.setEditable(true));
-        refreshJTable(model);
+
 
         //Add Location ID panel to Location Info panel
-        JPanel Panel4 = new JPanel();refreshJTable(model);
+        JPanel Panel4 = new JPanel();
         Panel4.setLayout(new GridLayout(3, 1));
         Panel4.add(locationTypePanel);
         Panel4.add(editLocationType);
@@ -154,9 +161,8 @@ public class DisplayFour implements StatementCreator, MouseListener
             System.out.println(text1);
             System.out.println(text2);
             System.out.println(text3);
-            refreshJTable(model);
 
-//            ConnectivityFramework.getCF().addLocation(text, text1, text2, text3);
+
         });
 
         //Add a delete
@@ -169,7 +175,7 @@ public class DisplayFour implements StatementCreator, MouseListener
             finalLocationName.setText("");
             finalLocationSize.setText("");
             finalLocationType.setText("");
-            refreshJTable(model);
+//            refreshJTable(model);
         });
 
         frame.setLayout(new GridLayout(2, 4));
@@ -180,12 +186,17 @@ public class DisplayFour implements StatementCreator, MouseListener
         frame.add(createLocationListPanel());
         frame.add(addLocation);
         frame.add(deleteLocation);
-        this.refreshJTable(model);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Display Four");
         frame.pack();
         frame.setVisible(true);
     }
+
+    /**
+     * Creates the location list panel
+     *
+     * @return JPanel
+     */
 
     private JPanel createLocationListPanel() {
         Border locationListBorder = BorderFactory.createTitledBorder("Location List");
@@ -197,22 +208,21 @@ public class DisplayFour implements StatementCreator, MouseListener
         model.addColumn("Location Name");
         model.addColumn("Location Size");
         model.addColumn("Location Type");
-        locationID = new JTextField("");
 
         table.addMouseListener(this);
-
-
 
         JScrollPane pane = new JScrollPane(table);
         locationListPanel.add(pane);
         return locationListPanel;
     }
 
-    public void addMouseListener(MouseListener listener) {
-        table.addMouseListener(listener);
-    }
+    /**
+     * Creates the location list panel
+     *
+     * @return JPanel
+     */
 
-    private void refreshJTable(DefaultTableModel model) {
+    private void refreshJTable(DefaultTableModel model) throws SQLException {
         String selectStmt = "SELECT * FROM Location";
         Statement stmt;
 
@@ -222,31 +232,46 @@ public class DisplayFour implements StatementCreator, MouseListener
 
         try {
             stmt = m_dbConn.createStatement();
-            ResultSet rs = stmt.executeQuery(selectStmt);
 
-            while (rs.next()) {
-                int locationID = rs.getInt("LocationID");
-                String locationName = rs.getString("LocationName");
-                String locationSize = rs.getString("LocationSize");
-                String locationType = rs.getString("LocationType");
+            try {
+                ResultSet rs = stmt.executeQuery(selectStmt);
+                while (rs.next()) {
+                    int locationID = rs.getInt(1);
+                    String locationName = rs.getString(2);
+                    String locationSize = rs.getString(3);
+                    String locationType = rs.getString(4);
 
-                model.addRow(new Object[]{locationID, locationName, locationSize, locationType});
+                    model.addRow(new Object[]{locationID, locationName, locationSize, locationType});
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DisplayFour.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(DisplayFour.class.getName()).log(Level.SEVERE, null, ex);
+            stmt.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static void main(String[] args)
-    {
+    /**
+     * Creates the location list panel
+     *
+     * @param args String[]
+     */
+
+    public static void main(String[] args) {
         new DisplayFour();
     }
 
-
+    /**
+     * Creates the location list panel
+     *
+     * @throws SQLException SQLException
+     */
     @Override
     public void insert() throws SQLException {
 
-        PreparedStatement ps = m_dbConn.prepareStatement("INSERT INTO Location VALUES(?,?,?,?)");
+        PreparedStatement ps = m_dbConn.prepareStatement("INSERT INTO" + LOCATION_TABLE +
+                "(LocationID, LocationName, LocationSize, LocationType) VALUES (?, ?, ?, ?)");
         ps.setString(1, "Location ID");
         ps.setString(2, "Location Name");
         ps.setString(3, "Location Size");
@@ -255,11 +280,17 @@ public class DisplayFour implements StatementCreator, MouseListener
 
 
     }
+
+    /**
+     * Creates the location list panel
+     *
+     * @throws SQLException SQLException
+     */
 
     @Override
     public void update() throws SQLException {
 
-        PreparedStatement ps = ConnectivityFramework.getCF().getConnection().prepareStatement("UPDATE Location SET LocationID = ?, LocationName = ?, LocationSize = ?, LocationType = ?");
+        PreparedStatement ps = m_dbConn.prepareStatement("UPDATE Location SET LocationID = ?, LocationName = ?, LocationSize = ?, LocationType = ?");
         ps.setString(1, "Location ID");
         ps.setString(2, "Location Name");
         ps.setString(3, "Location Size");
@@ -268,13 +299,24 @@ public class DisplayFour implements StatementCreator, MouseListener
 
     }
 
+    /**
+     * Creates the location list panel
+     *
+     * @throws SQLException SQLException
+     */
     @Override
     public void delete() throws SQLException {
 
-        PreparedStatement ps = ConnectivityFramework.getCF().getConnection().prepareStatement("DELETE FROM Location WHERE LocationID = ?");
+        PreparedStatement ps = m_dbConn.prepareStatement("DELETE FROM Location WHERE LocationID = ?");
         ps.setString(1, "Location ID");
         ps.executeUpdate();
     }
+
+    /**
+     * Creates the location list panel
+     *
+     * @param e the event to be processed by the mouse listener
+     */
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -290,19 +332,38 @@ public class DisplayFour implements StatementCreator, MouseListener
         this.locationType.setText(locationType);
     }
 
-
+    /**
+     * Creates the location list panel
+     *
+     * @param e the event to be processed by the mouse listener
+     */
     @Override
     public void mousePressed(MouseEvent e) {
     }
 
+    /**
+     * Creates the location list panel
+     *
+     * @param e the event to be processed by the mouse listener
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
     }
 
+    /**
+     * Creates the location list panel
+     *
+     * @param e the event to be processed by the mouse listener
+     */
     @Override
     public void mouseEntered(MouseEvent e) {
     }
 
+    /**
+     * Creates the location list panel
+     *
+     * @param e the event to be processed by the mouse listener
+     */
     @Override
     public void mouseExited(MouseEvent e) {
     }

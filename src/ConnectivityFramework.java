@@ -58,7 +58,8 @@ public class ConnectivityFramework {
 //		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
 //		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
 //		getCF().populatePlayerTable();
-		getCF().populateAbilityTable();
+//		getCF().populateAbilityTable();
+		getCF().populateLocationTable();
 	}
  
     /**
@@ -239,8 +240,30 @@ public class ConnectivityFramework {
     /**
      * call to populate Location table with 5 entries
      */
-    public void populateLocationTable()
-    {
+    public void populateLocationTable() throws SQLException
+	{
+		String[][] locationEntries = new String[5][4];
+		locationEntries[0][0] = "123456"; locationEntries[0][1] = "Watery Grave"; locationEntries[0][2] = "4896.3"; locationEntries[0][3] = "Ocean";
+		locationEntries[1][0] = "654321"; locationEntries[1][1] = "Ancestral Caves"; locationEntries[1][2] = "1500.75"; locationEntries[1][3] = "Mountain";
+		locationEntries[2][0] = "785968"; locationEntries[2][1] = "Burning Plains"; locationEntries[2][2] = "333.7"; locationEntries[2][3] = "Desert";
+		locationEntries[3][0] = "285856"; locationEntries[3][1] = "Lost Woods"; locationEntries[3][2] = "117.85"; locationEntries[3][3] = "Forest";
+		locationEntries[4][0] = "456987"; locationEntries[4][1] = "Toxic Wasteland"; locationEntries[4][2] = "100.0"; locationEntries[4][3] = "Grassland";
+		String insertStmt = "INSERT INTO Location (LOC_ID, Loc_Name, Loc_Size, Loc_Type) VALUES (?, ?, ?, ?);";
+		PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (j == 0) {
+					int n = Integer.parseInt(locationEntries[i][j]);
+					ps.setInt(j+1, n);
+				}
+				else {
+					ps.setString(j+1, locationEntries[i][j]);
+				}
+			}
+			ps.executeUpdate();
+		}
+
     	//TODO: Alecia
     }
     
