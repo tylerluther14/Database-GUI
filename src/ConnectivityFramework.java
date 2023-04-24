@@ -52,13 +52,13 @@ public class ConnectivityFramework {
 	{
 	
 		//statements need to be executed in this order
-//		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
-//		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
-//		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
-//		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
-//		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
-//		getCF().populatePlayerTable();
-//		getCF().populateAbilityTable();
+		getCF().createTable(CREATE_PLAYER_TABLE_STMT);
+		getCF().createTable(CREATE_LOCATION_TABLE_STMT);
+		getCF().createTable(CREATE_CHARACTER_TABLE_STMT);
+		getCF().createTable(CREATE_ABILITY_TABLE_STMT);
+		getCF().createTable(CREATE_WEAPON_TABLE_STMT);
+		getCF().populatePlayerTable();
+		getCF().populateAbilityTable();
 		getCF().populateLocationTable();
 	}
  
@@ -150,9 +150,7 @@ public class ConnectivityFramework {
     		+ "LOC_ID INTEGER PRIMARY KEY,"
     		+ "Loc_Name VARCHAR(100) NOT NULL CHECK (LENGTH(Loc_Name) >= 3),"
     		+ "Loc_Size REAL NOT NULL,"
-    		+ "Loc_Type VARCHAR(20) NOT NULL CHECK (LENGTH(Loc_Type) >= 4),"
-    		+ "Lead_Id INTEGER,"
-    		+ "CONSTRAINT fk_leadid FOREIGN KEY (Lead_Id) REFERENCES Location(LOC_ID)"
+    		+ "Loc_Type VARCHAR(20) NOT NULL CHECK (LENGTH(Loc_Type) >= 4)"
     		+ ");";
     
     /**
