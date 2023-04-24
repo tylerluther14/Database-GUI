@@ -1,9 +1,0 @@
-/**
- * 
- */
-/**
- * @author Tyler
- *
- */
-module database {
-}
