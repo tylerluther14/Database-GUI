@@ -245,19 +245,24 @@ public class DisplayOne {
           public void actionPerformed(ActionEvent e)
           {
         	  try {
-        		  characterName = char_Name.getText();
+        		      characterName = char_Name.getText();
                   characterStrength = Integer.parseInt(char_Strength.getText());
                   characterStamina = Integer.parseInt(char_Stamina.getText());
                   characterCHP = Integer.parseInt(char_Current_Hit_points.getText());
                   characterMHP = Integer.parseInt(Char_Max_Hit_points.getText());
                   playerID = Integer.parseInt(Player_Id.getText());
                   
-                  characterAttributes = characterName + "," + characterStrength + "," + characterStamina;
-                  System.out.println(characterAttributes);
-                  Char_Attributes = characterAttributes;
+                  System.out.println("Adding " + characterName + "," + characterStrength + "," + characterStamina + "," + 
+                      characterCHP + "," + characterMHP + "," + playerID);
         		  
                   try {
                 	  insert();
+                	  char_Strength.setText("");
+                	  char_Stamina.setText("");
+                	  char_Current_Hit_points.setText("");
+                	  Char_Max_Hit_points.setText("");
+                	  Player_Id.setText("");
+                	  
                   } catch (SQLException e1){
                 	  System.out.println(e1.getMessage());
                   }
@@ -290,19 +295,37 @@ public class DisplayOne {
     UpdateCharacterPanel.setBorder(UpdateCharacterBorder);
     
     //update character panel fields
-    JTextField char_NameU = new JTextField("Char_Name");
-    JTextField char_StrengthU = new JTextField("char_Strength");
-    JTextField char_StaminaU = new JTextField("char_Stamina");
-    JTextField char_Current_Hit_pointsU = new JTextField("char_Current_Hit_points");
-    JTextField Char_Max_Hit_pointsU = new JTextField("Char_Max_Hit_points");
+    JTextField char_NameU = new JTextField();
+    JLabel char_NameUL = new JLabel("char_Name");
+    
+    JTextField char_StrengthU = new JTextField();
+    JLabel char_StrengthUL = new JLabel("char_Strength");
+    
+    JTextField char_StaminaU = new JTextField();
+    JLabel char_StaminaUL = new JLabel("char_Stamina");
+    
+    JTextField char_Current_Hit_pointsU = new JTextField();
+    JLabel char_CHPUL = new JLabel("char_Current_Hit_points");
+    
+    JTextField Char_Max_Hit_pointsU = new JTextField();
+    JLabel char_MHPUL = new JLabel("char_Max_Hit_points");
     
     //Update Character button
     JButton u = new JButton("Update Character");
     
+    UpdateCharacterPanel.add(char_NameUL);
     UpdateCharacterPanel.add(char_NameU);
+    
+    UpdateCharacterPanel.add(char_StrengthUL);
     UpdateCharacterPanel.add(char_StrengthU);
+    
+    UpdateCharacterPanel.add(char_StaminaUL);
     UpdateCharacterPanel.add(char_StaminaU);
+    
+    UpdateCharacterPanel.add(char_CHPUL);
     UpdateCharacterPanel.add(char_Current_Hit_pointsU);
+    
+    UpdateCharacterPanel.add(char_MHPUL);
     UpdateCharacterPanel.add(Char_Max_Hit_pointsU);
     
     u.addActionListener(
@@ -310,30 +333,30 @@ public class DisplayOne {
             {
               String characterAttributes;
               public void actionPerformed(ActionEvent e)
-              {           
-                characterNameU = char_NameU.getText();
-                characterStrengthU = Integer.parseInt(char_StrengthU.getText());
-                characterStaminaU = Integer.parseInt(char_StaminaU.getText());
-                characterCHP = Integer.parseInt(char_Current_Hit_pointsU.getText());
-                characterMHP = Integer.parseInt(Char_Max_Hit_pointsU.getText());
+              { 
+                try {
+                  characterNameU = char_NameU.getText();
+                  characterStrengthU = Integer.parseInt(char_StrengthU.getText());
+                  characterStaminaU = Integer.parseInt(char_StaminaU.getText());
+                  characterCHPU = Integer.parseInt(char_Current_Hit_pointsU.getText());
+                  characterMHPU = Integer.parseInt(Char_Max_Hit_pointsU.getText());
+                  
+                  try {
+                    update();
+                  } catch (SQLException e1) {
+                    e1.getMessage();
+                  }
+                  System.out.println("Updating To " + characterName + "," + characterStrength + "," + characterStamina + "," + 
+                      characterCHP + "," + characterMHP + "," + playerID);
+                  
+                } catch {
+                  
+                }
                 
                 characterAttributes = characterName + "," + characterStrength + "," + characterStamina;
                 System.out.println(characterAttributes);
                 Char_Attributes = characterAttributes;
-                new Timer().schedule(
-                  new TimerTask() {
-                    @Override
-                    public void run()
-                    {
-                      char_NameU.setText("char_Name");
-                      char_StrengthU.setText("char_Strength");
-                      char_StaminaU.setText("char_Stamina");
-                      char_Current_Hit_pointsU.setText("char_Current_Hit_points");
-                      Char_Max_Hit_pointsU.setText("Char_Max_Hit_points");
-                      }
-                    },
-                    3000
-                  );
+
                 }
             }
             );
