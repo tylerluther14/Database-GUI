@@ -267,11 +267,47 @@ public class ConnectivityFramework {
     
     /**
      * call to populate CharInfo table with 5 different entries
+     * Author: tyler
+     * @throws SQLException 
      */
-    public void populateCharTable()
+    public void populateCharTable() throws SQLException
     {
-    	//TODO: Tyler
+        String[][] abilityEntries = new String[5][9];
+        abilityEntries[0][0] = "1"; abilityEntries[0][1] = "15"; abilityEntries[0][2] = "10.0"; abilityEntries[0][3] = "50.5"; abilityEntries[0][4] = "3.3"; abilityEntries[0][5] = "No"; abilityEntries[0][6] = "2"; abilityEntries[0][7] = "3"; abilityEntries[0][8] = "Speed";  
+        abilityEntries[1][0] = "2"; abilityEntries[1][1] = "10"; abilityEntries[1][2] = "5.5"; abilityEntries[1][3] = "25.5"; abilityEntries[1][4] = "2.2"; abilityEntries[1][5] = "Yes"; abilityEntries[1][6] = "1"; abilityEntries[1][7] = "4"; abilityEntries[1][8] = "Heal";
+        abilityEntries[2][0] = "3"; abilityEntries[2][1] = "20"; abilityEntries[2][2] = "7.25"; abilityEntries[2][3] = "20.2"; abilityEntries[2][4] = "3.4"; abilityEntries[2][5] = "Yes"; abilityEntries[2][6] = "3"; abilityEntries[2][7] = "2"; abilityEntries[2][8] = "Invis"; 
+        abilityEntries[3][0] = "4"; abilityEntries[3][1] = "5"; abilityEntries[3][2] = "15.2"; abilityEntries[3][3] = "30.6"; abilityEntries[3][4] = "4.5"; abilityEntries[3][5] = "No"; abilityEntries[3][6] = "4"; abilityEntries[3][7] = "1"; abilityEntries[3][8] = "2xDam";
+        abilityEntries[4][0] = "5"; abilityEntries[4][1] = "25"; abilityEntries[4][2] = "20.1"; abilityEntries[4][3] = "22.6"; abilityEntries[4][4] = "5.6"; abilityEntries[4][5] = "No"; abilityEntries[4][6] = "3"; abilityEntries[4][7] = "2"; abilityEntries[4][8] = "Blast"; 
+    	
+    	String insertStmt = "INSERT INTO Ability (Ability_id, Hit_Points, Strength, Stamina, Repeat_Rate, Repeating, Repeat_Time, Execute_Time, Ability_Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    	PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+    	
+    	for (int i = 0; i < 5; i++)
+    	{
+    		for (int j = 0; j < 9; j++)
+    		{
+    			//int attributes
+    			if ((j == 0) || (j == 1) || (j == 6) || (j == 7))
+    			{
+    				int x = Integer.parseInt(abilityEntries[i][j]);
+    				ps.setInt(j+1, x);
+    			}
+    			//real attributes
+    			else if ((j == 2) || (j == 3) || (j == 4))
+    			{
+    				double x = Double.parseDouble(abilityEntries[i][j]);
+    				ps.setDouble(j+1, x);
+    			}
+    			//char attributes
+    			else if ((j == 5) || (j == 8))
+    			{
+    				ps.setString(j+1, abilityEntries[i][j]);
+    			}
+    		}
+    		ps.executeUpdate();
+    	}
     }
+    
     
     /**
      * call to populate Ability table with 5 different entries
