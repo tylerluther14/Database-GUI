@@ -40,6 +40,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
   int characterCHP;
   int characterMHP;
   int playerID;
+  int locationid;
   
   //Update Variables
   String updateNameU;
@@ -63,6 +64,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
   JTextField selectedCharacterCHP = new JTextField();
   JTextField selectedCharacterMHP = new JTextField();
   JTextField selectedCharacterPID = new JTextField();
+  JTextField selectedCharacterLID = new JTextField();
   
   private static final String TABLE_NAME = "CharInfo";
   private ConnectivityFramework cf = ConnectivityFramework.getCF();
@@ -143,6 +145,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
     model.addColumn("char_Current_Hit_points");
     model.addColumn("char_Max_Hit_points");
     model.addColumn("Player_Id");
+    model.addColumn("location ID");
     
     table.addMouseListener((MouseListener) this);
     
@@ -165,7 +168,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
     CharacterInfoPanel.setBorder(CharacterInfoBorder);
     
     JPanel panel = new JPanel();
-    panel.setLayout(new GridLayout(6,0));
+    panel.setLayout(new GridLayout(7,0));
     
     JLabel characterName = new JLabel("Character name: ");
     panel.add(characterName);
@@ -196,6 +199,11 @@ public class DisplayOne implements StatementCreator, MouseListener{
     panel.add(characterPID);
     selectedCharacterPID.setEditable(false);
     panel.add(selectedCharacterPID);
+    
+    JLabel characterLID = new JLabel("Location ID: ");
+    panel.add(characterLID);
+    selectedCharacterLID.setEditable(false);
+    panel.add(selectedCharacterLID);
     
     CharacterInfoPanel.add(panel);
     
@@ -282,6 +290,9 @@ public class DisplayOne implements StatementCreator, MouseListener{
     JTextField Player_Id = new JTextField();
     JLabel char_playerIDL = new JLabel("Player_Id");
     
+    JTextField location_ID = new JTextField();
+    JLabel char_locationIDL = new JLabel("Location_ID");
+    
     InsertCharacterPanel.add(char_NameL);
     InsertCharacterPanel.add(char_Name);
     
@@ -300,6 +311,10 @@ public class DisplayOne implements StatementCreator, MouseListener{
     InsertCharacterPanel.add(char_playerIDL);
     InsertCharacterPanel.add(Player_Id);
     
+    InsertCharacterPanel.add(char_locationIDL);
+    InsertCharacterPanel.add(location_ID);
+    
+    
     JButton b = new JButton("Insert Character");
     
     b.addActionListener(
@@ -315,9 +330,10 @@ public class DisplayOne implements StatementCreator, MouseListener{
                   characterCHP = Integer.parseInt(char_Current_Hit_points.getText());
                   characterMHP = Integer.parseInt(Char_Max_Hit_points.getText());
                   playerID = Integer.parseInt(Player_Id.getText());
+                  locationid = Integer.parseInt(location_ID.getText());
                   
                   System.out.println("Adding " + characterName + "," + characterStrength + "," + characterStamina + "," + 
-                      characterCHP + "," + characterMHP + "," + playerID);
+                      characterCHP + "," + characterMHP + "," + playerID + "," + locationid);
         		  
                   try {
                 	  insert();
@@ -326,6 +342,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
                 	  char_Current_Hit_points.setText("");
                 	  Char_Max_Hit_points.setText("");
                 	  Player_Id.setText("");
+                	  location_ID.setText("");
                 	  
                   } catch (SQLException e1){
                 	  System.out.println(e1.getMessage());
@@ -439,7 +456,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
 	 */
   public void insert() throws SQLException
 	{
-		String insertStmt = "INSERT INTO " + TABLE_NAME + " (Char_Name, char_Strength, char_Stamina, char_Current_Hit_Points, Char_Max_Hit_Points, Player_ID) VALUES (?, ?, ?, ?, ?, ?);";
+		String insertStmt = "INSERT INTO " + TABLE_NAME + " (Char_Name, char_Strength, char_Stamina, char_Current_Hit_Points, Char_Max_Hit_Points, Player_ID, Location_ID) VALUES (?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
 		ps.setString(1, characterName);
 		ps.setInt(2, characterStrength);
@@ -447,10 +464,11 @@ public class DisplayOne implements StatementCreator, MouseListener{
 		ps.setInt(4, characterCHP);
 		ps.setInt(5, characterMHP);
 		ps.setInt(6, playerID);
+		ps.setInt(7, locationid);
   	
 		ps.executeUpdate();
 		
-		System.out.println("Insert: " + characterName + "," + characterStrength + "," + characterStamina + "," + characterCHP + "," + characterMHP + "," + playerID);
+		System.out.println("Insert: " + characterName + "," + characterStrength + "," + characterStamina + "," + characterCHP + "," + characterMHP + "," + playerID + "," + locationid);
 	}
   
 	/**
@@ -521,8 +539,9 @@ public class DisplayOne implements StatementCreator, MouseListener{
 					int charCHP = rs.getInt(4);
 					int charMHP = rs.getInt(5);
 					int playerid = rs.getInt(6);
+					int locID = rs.getInt(7);
 					
-					model.addRow(new Object[]{charName, charStren, charStam, charCHP, charMHP, playerid});
+					model.addRow(new Object[]{charName, charStren, charStam, charCHP, charMHP, playerid, locID});
 				}
 			} 
 			catch (SQLException e1) 
@@ -550,6 +569,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
     String characterCHP = model.getValueAt(index, 3).toString();
     String characterMHP = model.getValueAt(index, 4).toString();
     String characterPID = model.getValueAt(index, 5).toString();
+    String characterLID = model.getValueAt(index, 6).toString();
     
     //displays selected character info
     selectedCharacterName.setText(CharacterName);
@@ -558,6 +578,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
     selectedCharacterCHP.setText(characterCHP);
     selectedCharacterMHP.setText(characterMHP);
     selectedCharacterPID.setText(characterPID);
+    selectedCharacterLID.setText(characterLID);
     
     //   
   }
