@@ -61,6 +61,7 @@ public class ConnectivityFramework {
 		getCF().populateAbilityTable();
 		getCF().populateLocationTable();
 		getCF().populateCharTable();
+		getCF().populateWeaponsTable();
 	}
  
     /**
@@ -356,10 +357,39 @@ public class ConnectivityFramework {
     
     /**
      * call to populate Weapons table with 5 different entries
+     * author Brian
+     * @throws SQLException 
      */
-    public void populateWeaponsTable()
+    public void populateWeaponsTable() throws SQLException
     {
-    	//TODO: Brian
+      String[][] weaponEntries = new String[5][5];
+      weaponEntries[0][0] = "1"; weaponEntries[0][1] = "15"; weaponEntries[0][2] = "Sword"; weaponEntries[0][3] = "Yes"; weaponEntries[0][4] = "Small Sword";  
+      weaponEntries[1][0] = "2"; weaponEntries[1][1] = "10"; weaponEntries[1][2] = "Bow"; weaponEntries[1][3] = "Yes";  weaponEntries[1][4] = "Wood Bow";
+      weaponEntries[2][0] = "3"; weaponEntries[2][1] = "20"; weaponEntries[2][2] = "Sword"; weaponEntries[2][3] = "No"; weaponEntries[2][4] = "Big Sword"; 
+      weaponEntries[3][0] = "4"; weaponEntries[3][1] = "5"; weaponEntries[3][2] = "Staff"; weaponEntries[3][3] = "Yes";  weaponEntries[3][4] = "Wood Staff";
+      weaponEntries[4][0] = "5"; weaponEntries[4][1] = "25"; weaponEntries[4][2] = "Bow"; weaponEntries[4][3] = "No"; weaponEntries[4][4] = "Metal Bow"; 
+
+      String insertStmt = "INSERT INTO Weapon (Ability_id, W_id, WeaponType, StoredWeapon, W_Name) VALUES (?, ?, ?, ?, ?);";
+      PreparedStatement ps = m_dbConn.prepareStatement(insertStmt);
+
+      for (int i = 0; i < 5; i++)
+      {
+        for (int j = 0; j < 5; j++)
+        {
+          //int attributes
+          if ((j == 0) || (j == 1))
+          {
+            int x = Integer.parseInt(weaponEntries[i][j]);
+            ps.setInt(j+1, x);
+          }
+          //char attributes
+          else if ((j == 2) || (j == 3) || (j == 4))
+          {
+            ps.setString(j+1, weaponEntries[i][j]);
+          }
+        }
+        ps.executeUpdate();
+      }
     }
 }
 
