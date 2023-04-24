@@ -3,7 +3,7 @@
  
 # Author and Contributors
 Brian Keser - \
-Rachal Johnston -\ 
+Rachal Johnston - \
 Alecia Meredith - \
 Tyler Luther(ME) - tl2473@ship.edu\
 
