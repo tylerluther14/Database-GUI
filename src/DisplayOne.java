@@ -15,7 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,12 +30,24 @@ public class DisplayOne {
   String deleteThisCharacter;
   String Char_Attributes;
   
+  //Insert variables
   String characterName;
   int characterStrength;
   int characterStamina;
   int characterCHP;
   int characterMHP;
   int playerID;
+  
+  //Update Variables
+  String characterNameU;
+  int characterStrengthU;
+  int characterStaminaU;
+  int characterCHPU;
+  int characterMHPU;
+  
+  //character table
+  DefaultTableModel model = new DefaultTableModel();
+  JTable table = new JTable(model);
   
   private static final String TABLE_NAME = "CharInfo";
   private ConnectivityFramework cf = ConnectivityFramework.getCF();
@@ -107,9 +121,7 @@ public class DisplayOne {
     JPanel SelectedCharacterPanel = new JPanel();
     SelectedCharacterPanel.setLayout(new GridLayout(0, 1));
     SelectedCharacterPanel.setBorder(SelectedCharacterBorder);
-    
-    DefaultTableModel model = new DefaultTableModel();
-	JTable table = new JTable(model);
+   
 	
     JScrollPane pane = new JScrollPane(table);
     pane.setVisible(true);
@@ -160,7 +172,7 @@ public class DisplayOne {
                 @Override
                 public void run()
                 {
-                  char_NameD.setText("Login ID");
+                  char_NameD.setText("Char_Name");
                 }
               },
               3000
@@ -207,17 +219,35 @@ public class DisplayOne {
         {
           String characterAttributes;
           public void actionPerformed(ActionEvent e)
-          {           
-            characterName = char_Name.getText();
-            characterStrength = Integer.parseInt(char_Strength.getText());
-            characterStamina = Integer.parseInt(char_Stamina.getText());
-            characterCHP = Integer.parseInt(char_Current_Hit_points.getText());
-            characterMHP = Integer.parseInt(Char_Max_Hit_points.getText());
-            playerID = Integer.parseInt(Player_Id.getText());
+          {
+        	  try {
+        		  characterName = char_Name.getText();
+                  characterStrength = Integer.parseInt(char_Strength.getText());
+                  characterStamina = Integer.parseInt(char_Stamina.getText());
+                  characterCHP = Integer.parseInt(char_Current_Hit_points.getText());
+                  characterMHP = Integer.parseInt(Char_Max_Hit_points.getText());
+                  playerID = Integer.parseInt(Player_Id.getText());
+                  
+                  characterAttributes = characterName + "," + characterStrength + "," + characterStamina;
+                  System.out.println(characterAttributes);
+                  Char_Attributes = characterAttributes;
+        		  
+                  try {
+                	  insert();
+                  } catch (SQLException e1){
+                	  System.out.println(e1.getMessage());
+                  }
+                  
+        	  }	catch (NumberFormatException n) {
+				
+					
+				}
+        	  refreshCharacterListJTable(model);
+          }
+        }
+    );	  
+          
             
-            characterAttributes = characterName + "," + characterStrength + "," + characterStamina;
-            System.out.println(characterAttributes);
-            Char_Attributes = characterAttributes;
             new Timer().schedule(
               new TimerTask() {
                 @Override
@@ -229,12 +259,6 @@ public class DisplayOne {
                 },
                 3000
               );
-            }
-        }
-        );
-
-
-    
     
     InsertCharacterPanel.add(b);
     return InsertCharacterPanel;
@@ -258,9 +282,8 @@ public class DisplayOne {
     JTextField char_StaminaU = new JTextField("char_Stamina");
     JTextField char_Current_Hit_pointsU = new JTextField("char_Current_Hit_points");
     JTextField Char_Max_Hit_pointsU = new JTextField("Char_Max_Hit_points");
-    JTextField Player_IdU = new JTextField("Player_Id");
     
-    //Insert Character button
+    //Update Character button
     JButton u = new JButton("Update Character");
     
     UpdateCharacterPanel.add(char_NameU);
@@ -268,8 +291,39 @@ public class DisplayOne {
     UpdateCharacterPanel.add(char_StaminaU);
     UpdateCharacterPanel.add(char_Current_Hit_pointsU);
     UpdateCharacterPanel.add(Char_Max_Hit_pointsU);
-    UpdateCharacterPanel.add(Player_IdU);
     
+    u.addActionListener(
+            new ActionListener()
+            {
+              String characterAttributes;
+              public void actionPerformed(ActionEvent e)
+              {           
+                characterNameU = char_NameU.getText();
+                characterStrengthU = Integer.parseInt(char_StrengthU.getText());
+                characterStaminaU = Integer.parseInt(char_StaminaU.getText());
+                characterCHP = Integer.parseInt(char_Current_Hit_pointsU.getText());
+                characterMHP = Integer.parseInt(Char_Max_Hit_pointsU.getText());
+                
+                characterAttributes = characterName + "," + characterStrength + "," + characterStamina;
+                System.out.println(characterAttributes);
+                Char_Attributes = characterAttributes;
+                new Timer().schedule(
+                  new TimerTask() {
+                    @Override
+                    public void run()
+                    {
+                      char_NameU.setText("char_Name");
+                      char_StrengthU.setText("char_Strength");
+                      char_StaminaU.setText("char_Stamina");
+                      char_Current_Hit_pointsU.setText("char_Current_Hit_points");
+                      Char_Max_Hit_pointsU.setText("Char_Max_Hit_points");
+                      }
+                    },
+                    3000
+                  );
+                }
+            }
+            );
     
     UpdateCharacterPanel.add(u);
     return UpdateCharacterPanel;
@@ -301,16 +355,66 @@ public class DisplayOne {
 	 */
 	public void update() throws SQLException
 	{
-		String updateStmt = "UPDATE " + TABLE_NAME + " SET Char_Name = ?, char_Strength = ?, char_Stamina = ?, char_Current_Hit_Points = ?, Char_Max_Hit_Points = ?, Player_ID = ?;";
+		String updateStmt = "UPDATE " + TABLE_NAME + " SET Char_Name = ?, char_Strength = ?, char_Stamina = ?, char_Current_Hit_Points = ?, Char_Max_Hit_Points = ?;";
 		PreparedStatement ps = m_dbConn.prepareStatement(updateStmt);
-		ps.setInt(1, editToThisLoginID);
-		ps.setString(2, editToThisPassword);
-		ps.setString(3, editToThisEmail);
-		ps.setInt(4, playerToBeEdited);
+		ps.setString(1, characterNameU);
+		ps.setInt(2, characterStrengthU);
+		ps.setInt(3, characterStaminaU);
+		ps.setInt(4, characterCHPU);
+		ps.setInt(5, characterMHPU);
   	
 		ps.executeUpdate();
 		
-		System.out.println("Update " + playerToBeEdited + "to: " + editToThisLoginID + "," + editToThisPassword + "," + editToThisEmail);
+		System.out.println("Update " + characterNameU + "to: " + characterNameU + "," + characterStrengthU + "," + characterStaminaU + "," + characterCHPU + "," + characterMHPU);
+	}
+	
+	/**
+	 * used in add, edit, and delete buttons to refresh and display updated values in the JTable
+	 * @param model
+	 */
+	private void refreshCharacterListJTable(DefaultTableModel model) 
+	{
+		String selectStmt = "SELECT * FROM Player";
+		
+		Statement stmt;
+		
+		//clears the table
+		while(model.getRowCount() > 0)
+		{
+		    model.removeRow(0);
+		}
+		
+		//this try/catch accounts for an SQL exception when creating a statement
+		try 
+		{
+			stmt = m_dbConn.createStatement();
+			
+			//this try/catch accounts for an SQL exception when executing a query
+			try 
+			{
+				ResultSet rs = stmt.executeQuery(selectStmt);
+				while (rs.next())
+				{
+					String charName = rs.getString(1);
+					int charStren = rs.getInt(2);
+					int charStam = rs.getInt(3);
+					int charCHP = rs.getInt(4);
+					int charMHP = rs.getInt(5);
+					int playerid = rs.getInt(6);
+					
+					model.addRow(new Object[]{charName, charStren, charStam, charCHP, charMHP, playerid});
+				}
+			} 
+			catch (SQLException e1) 
+			{
+				System.out.println(e1.getMessage());
+			}
+			stmt.close();
+		} 
+		catch (SQLException e2) 
+		{
+			System.out.println(e2.getMessage());
+		}
 	}
   
   public static void main(String[] args) {
