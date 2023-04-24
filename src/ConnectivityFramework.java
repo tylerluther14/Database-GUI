@@ -236,6 +236,7 @@ public class ConnectivityFramework {
     
     /**
      * call to populate Location table with 5 entries
+     * by: Alecia
      */
     public void populateLocationTable() throws SQLException
 	{
@@ -260,8 +261,6 @@ public class ConnectivityFramework {
 			}
 			ps.executeUpdate();
 		}
-
-    	//TODO: Alecia
     }
     
     /**
