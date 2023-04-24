@@ -14,6 +14,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,7 +28,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-public class DisplayOne {
+public class DisplayOne implements StatementCreator, MouseListener{
 
   String deleteThisCharacter;
   String Char_Attributes;
@@ -53,6 +55,14 @@ public class DisplayOne {
   //character table
   DefaultTableModel model = new DefaultTableModel();
   JTable table = new JTable(model);
+  
+  //selected info table
+  JTextField selectedCharacterName = new JTextField();
+  JTextField selectedCharacterStrength = new JTextField();
+  JTextField selectedCharacterStamina = new JTextField();
+  JTextField selectedCharacterCHP = new JTextField();
+  JTextField selectedCharacterMHP = new JTextField();
+  JTextField selectedCharacterPID = new JTextField();
   
   private static final String TABLE_NAME = "CharInfo";
   private ConnectivityFramework cf = ConnectivityFramework.getCF();
@@ -127,7 +137,15 @@ public class DisplayOne {
     SelectedCharacterPanel.setLayout(new GridLayout(0, 1));
     SelectedCharacterPanel.setBorder(SelectedCharacterBorder);
    
-	
+    model.addColumn("Char_name");
+    model.addColumn("char_Strength");
+    model.addColumn("char_Stamina");
+    model.addColumn("char_Current_Hit_points");
+    model.addColumn("char_Max_Hit_points");
+    model.addColumn("Player_Id");
+    
+    table.addMouseListener((MouseListener) this);
+    
     JScrollPane pane = new JScrollPane(table);
     pane.setVisible(true);
     SelectedCharacterPanel.add(pane);
@@ -145,6 +163,42 @@ public class DisplayOne {
     JPanel CharacterInfoPanel = new JPanel();
     CharacterInfoPanel.setLayout(new GridLayout(0, 1));
     CharacterInfoPanel.setBorder(CharacterInfoBorder);
+    
+    JPanel panel = new JPanel();
+    panel.setLayout(new GridLayout(6,0));
+    
+    JLabel characterName = new JLabel("Character name: ");
+    panel.add(characterName);
+    selectedCharacterName.setEditable(false);
+    panel.add(selectedCharacterName);
+    
+    JLabel characterStrength = new JLabel("Character Strength: ");
+    panel.add(characterStrength);
+    selectedCharacterStrength.setEditable(false);
+    panel.add(selectedCharacterStrength);
+    
+    JLabel characterStamina = new JLabel("Character Stamina: ");
+    panel.add(characterStamina);
+    selectedCharacterStamina.setEditable(false);
+    panel.add(selectedCharacterStamina);
+    
+    JLabel characterCHP = new JLabel("Character Current HPS: ");
+    panel.add(characterCHP);
+    selectedCharacterCHP.setEditable(false);
+    panel.add(selectedCharacterCHP);
+    
+    JLabel characterMHP = new JLabel("Character Max HPS: ");
+    panel.add(characterMHP);
+    selectedCharacterMHP.setEditable(false);
+    panel.add(selectedCharacterMHP);
+    
+    JLabel characterPID = new JLabel("Player ID: ");
+    panel.add(characterPID);
+    selectedCharacterPID.setEditable(false);
+    panel.add(selectedCharacterPID);
+    
+    CharacterInfoPanel.add(panel);
+    
     return CharacterInfoPanel;
   }
 
@@ -482,6 +536,55 @@ public class DisplayOne {
 			System.out.println(e2.getMessage());
 		}
 	}
+	
+  /**
+   * execute when jtable clicked
+   */
+  //@Override
+  public void mouseClicked(MouseEvent e) 
+  {
+    int index = table.getSelectedRow();
+    String CharacterName = model.getValueAt(index, 0).toString();
+    String characterStrength = model.getValueAt(index, 1).toString();
+    String characterStamina = model.getValueAt(index, 2).toString();
+    String characterCHP = model.getValueAt(index, 3).toString();
+    String characterMHP = model.getValueAt(index, 4).toString();
+    String characterPID = model.getValueAt(index, 5).toString();
+    
+    //displays selected character info
+    selectedCharacterName.setText(CharacterName);
+    selectedCharacterStrength.setText(characterStrength);
+    selectedCharacterStamina.setText(characterStamina);
+    selectedCharacterCHP.setText(characterCHP);
+    selectedCharacterMHP.setText(characterMHP);
+    selectedCharacterPID.setText(characterPID);
+    
+    //   
+  }
+
+  @Override
+  public void mousePressed(MouseEvent e) 
+  {
+    //unneeded, can't get rid of it since i implemented MouseListener interface
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent e) 
+  {
+    //unneeded, can't get rid of it since i implemented MouseListener interface 
+  }
+
+  @Override
+  public void mouseEntered(MouseEvent e) 
+  {
+    //unneeded, can't get rid of it since i implemented MouseListener interface
+  }
+
+  @Override
+  public void mouseExited(MouseEvent e) 
+  {
+    //unneeded, can't get rid of it since i implemented MouseListener interface
+  }
   
   public static void main(String[] args) {
     new DisplayOne();
