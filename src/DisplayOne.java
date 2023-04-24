@@ -512,7 +512,7 @@ public class DisplayOne implements StatementCreator, MouseListener{
    */
   private void refreshCharacterListJTable(DefaultTableModel model) 
   {
-    String selectStmt = "SELECT * FROM Player";
+    String selectStmt = "SELECT * FROM CharInfo";
     
     Statement stmt;
     
