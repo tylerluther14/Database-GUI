@@ -28,17 +28,5 @@ public interface StatementCreator
 	 * @throws SQLException
 	 */
 	public void delete() throws SQLException;
-
-	void mouseClicked(MouseEvent e);
-
-	void mousePressed(MouseEvent e);
-
-	void mouseReleased(MouseEvent e);
-
-	void mouseEntered(MouseEvent e);
-
-	void mouseExited(MouseEvent e);
-
-	//we might need select??? for displaying the entries on each of our displays...not sure tho
-	
+		
 }
